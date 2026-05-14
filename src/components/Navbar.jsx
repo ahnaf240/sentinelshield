@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import { Shield, Menu, X, Zap, Cpu, Lock, Terminal, User, LogOut, Settings, Bell, Loader2 } from 'lucide-react';
 
+// ১. পেজ আইডিগুলো আপডেট করা হয়েছে যাতে প্রতিটা বাটনে আলাদা পেজ লোড হয়
 const navLinks = [
   { label: 'Dashboard', page: 'dashboard' },
-  { label: 'Threat Scanner', page: 'dashboard' },
-  { label: 'Breach Monitor', page: 'dashboard' },
-  { label: 'VPN Shield', page: 'dashboard' },
+  { label: 'Threat Scanner', page: 'threat-scanner' },
+  { label: 'Breach Monitor', page: 'breach-monitor' },
+  { label: 'VPN Shield', page: 'vpn-shield' },
 ];
 
 export default function Navbar({ activePage, setActivePage }) {
@@ -21,21 +22,17 @@ export default function Navbar({ activePage, setActivePage }) {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     
-    // --- System Session & User Profile Parallel Fetch ---
     const loadSessionData = async () => {
       try {
-        // সিস্টেম স্ট্যাটাস ফেচ
         const sessionRes = await fetch('/api/user-session');
         const sessionData = await sessionRes.json();
         if(sessionData.system) setSysStatus({ version: sessionData.system.version, status: sessionData.system.status });
 
-        // প্রোফাইল ডাটা ফেচ
         const profileRes = await fetch('/api/user-portal');
         const profileData = await profileRes.json();
         setUserData(profileData);
       } catch (error) {
         console.log("Sentinel Core: Local Mode Active");
-        // এরর হলে ডিফল্ট ডাটা
         setUserData({
           name: "SENTINEL_ADMIN",
           role: "Level 4 Access",
@@ -60,7 +57,6 @@ export default function Navbar({ activePage, setActivePage }) {
         boxShadow: scrolled ? '0 10px 30px -10px rgba(0,0,0,0.5)' : 'none'
       }}>
       
-      {/* Top Thin Security Bar */}
       <div className="hidden md:block w-full bg-blue-500/5 border-b border-white/5 py-1 px-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center text-[9px] font-mono tracking-[2px] text-slate-500">
           <div className="flex gap-4">
@@ -76,8 +72,8 @@ export default function Navbar({ activePage, setActivePage }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo Section */}
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActivePage('home')}>
+          {/* Logo - ক্লিক করলে ড্যাশবোর্ডে ফিরবে */}
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActivePage('dashboard')}>
             <div className="relative">
               <Shield className="w-8 h-8 transition-transform duration-500 group-hover:rotate-[360deg]" style={{ color: '#00d4ff' }} />
               <div className="absolute inset-0 animate-ping opacity-20">
@@ -115,7 +111,7 @@ export default function Navbar({ activePage, setActivePage }) {
             ))}
           </div>
 
-          {/* Right Action Area (Profile Added Here) */}
+          {/* User Profile Area */}
           <div className="hidden md:flex items-center gap-6">
             <button className="relative text-gray-500 hover:text-blue-400 transition-colors">
               <Bell size={20} />
@@ -144,7 +140,6 @@ export default function Navbar({ activePage, setActivePage }) {
                 </div>
               )}
 
-              {/* Dropdown Menu */}
               {showDropdown && (
                 <div className="absolute right-0 mt-3 w-52 bg-[#0a0f1a] border border-white/10 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200 z-[110]">
                   <div className="p-3 border-b border-white/5 mb-2">
@@ -169,13 +164,13 @@ export default function Navbar({ activePage, setActivePage }) {
           <div className="flex md:hidden items-center gap-4">
              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
              <button onClick={() => setMobileOpen(!mobileOpen)}
-               style={{ color: '#00d4ff', background: 'none', border: 'none', cursor: 'pointer' }}>
+               className="bg-transparent border-none cursor-pointer text-[#00d4ff]">
                {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
              </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Content */}
         <div className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
           mobileOpen ? 'max-h-[600px] opacity-100 py-6' : 'max-h-0 opacity-0'
         }`} style={{ borderTop: mobileOpen ? '1px solid rgba(0,212,255,0.1)' : 'none' }}>
@@ -183,12 +178,10 @@ export default function Navbar({ activePage, setActivePage }) {
             {navLinks.map((link) => (
               <button key={link.label}
                 onClick={() => { setActivePage(link.page); setMobileOpen(false); }}
-                className="block w-full text-left py-4 px-4 rounded-lg hover:bg-blue-500/10 transition-all border border-transparent hover:border-blue-500/20"
+                className="block w-full text-left py-4 px-4 rounded-lg hover:bg-blue-500/10 transition-all border border-transparent hover:border-blue-500/20 bg-transparent cursor-pointer"
                 style={{ 
                   color: activePage === link.page ? '#00d4ff' : 'rgba(224,232,240,0.8)', 
                   fontFamily: 'Exo 2, sans-serif', 
-                  background: 'none', 
-                  cursor: 'pointer',
                   letterSpacing: '1px'
                 }}>
                 <div className="flex justify-between items-center">
