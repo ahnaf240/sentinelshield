@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Shield, Menu, X, Zap, Cpu, Lock, Terminal, User, LogOut, Settings, Bell, Loader2 } from 'lucide-react';
 
-// ১. পেজ আইডিগুলো আপডেট করা হয়েছে যাতে প্রতিটা বাটনে আলাদা পেজ লোড হয়
+// পেজ আইডিগুলো আপডেট করা হয়েছে যাতে প্রতিটা বাটনে আলাদা পেজ লোড হয়
 const navLinks = [
   { label: 'Dashboard', page: 'dashboard' },
   { label: 'Threat Scanner', page: 'threat-scanner' },
@@ -72,8 +72,8 @@ export default function Navbar({ activePage, setActivePage }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo - ক্লিক করলে ড্যাশবোর্ডে ফিরবে */}
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActivePage('dashboard')}>
+          {/* Logo - পরিবর্তন করা হয়েছে: ক্লিক করলে সরাসরি ল্যান্ডিং (Hero) পেজে ব্যাক করবে */}
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActivePage('hero')}>
             <div className="relative">
               <Shield className="w-8 h-8 transition-transform duration-500 group-hover:rotate-[360deg]" style={{ color: '#00d4ff' }} />
               <div className="absolute inset-0 animate-ping opacity-20">
@@ -197,6 +197,7 @@ export default function Navbar({ activePage, setActivePage }) {
   );
 }
 
+// ChevronRight হেল্পার ফাংশনটি বাইরে আলাদা করে ডিফাইন করা হলো
 function ChevronRight({ size, className }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
