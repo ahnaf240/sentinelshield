@@ -16,7 +16,7 @@ import { Shield, Activity, Lock, Terminal } from 'lucide-react';
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   
-  // ১. ডিফল্ট স্টেট এখন 'hero' করা হয়েছে যাতে প্রথমে ল্যান্ডিং পেজ আসে
+  // ডিফল্টভাবে HeroSection আসবে
   const [activePage, setActivePage] = useState('hero');
 
   useEffect(() => {
@@ -33,46 +33,42 @@ export default function Home() {
         <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
       </div>
 
-      {/* ২. নেভবার সবসময় থাকবে */}
       <Navbar activePage={activePage} setActivePage={setActivePage} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 space-y-10 mt-16 md:mt-24">
         
-        {/* ৩. কন্ডিশনাল রেন্ডারিং লজিক */}
-        
+        {/* ল্যান্ডিং পেজ লজিক */}
         {activePage === 'hero' ? (
-          /* ল্যান্ডিং পেজ ভিউ */
           <div className="animate-in fade-in duration-1000">
             <HeroSection setActivePage={setActivePage} />
           </div>
         ) : activePage === 'dashboard' ? (
-          /* ড্যাশবোর্ড ভিউ */
+          /* ড্যাশবোর্ড ভিউ - ব্যানার ছাড়া */
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header Area */}
+            
+            {/* কমান্ড সেন্টার হেডার */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-8">
               <div>
                 <h1 className="text-3xl font-bold tracking-tighter text-blue-400 font-mono">COMMAND_CENTER</h1>
-                <p className="text-slate-500 text-sm">System monitoring and active defense active.</p>
+                <p className="text-slate-500 text-sm">Professional Security Monitoring Dashboard</p>
               </div>
               
               <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 p-3 rounded-xl">
                 <div className="relative">
                   <Activity className="text-green-500 animate-pulse" size={20} />
-                  <div className="absolute inset-0 bg-green-500/20 blur-sm rounded-full" />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">System Status</p>
-                  <p className="text-sm font-mono text-green-400">ENCRYPTED & SECURE</p>
+                  <p className="text-sm font-mono text-green-400">ONLINE & SECURE</p>
                 </div>
               </div>
             </div>
 
-            {/* Core Metrics */}
+            {/* মূল মডিউলগুলো সরাসরি লোড হবে */}
             <section>
               <Dashboard />
             </section>
 
-            {/* Visualization Grid */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
                 <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center gap-2">
@@ -88,7 +84,6 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Security Tools */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 px-2">
                 <Lock size={20} className="text-blue-500" />
@@ -113,7 +108,7 @@ export default function Home() {
             </section>
           </div>
         ) : (
-          /* অন্যান্য মডিউল ভিউ (যেমন Threat Scanner) */
+          /* অন্যান্য পেজ ভিউ */
           <div className="min-h-[70vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
              <div className="text-center space-y-4 w-full">
                 <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -141,13 +136,12 @@ export default function Home() {
         )}
       </div>
 
-      {/* Floating UI Elements */}
       <div className="fixed bottom-6 right-6 z-50">
         <AIChatbot />
       </div>
 
       <footer className="mt-20 py-10 border-t border-slate-900 text-center">
-        <div className="flex items-center justify-center gap-2 text-slate-600 mb-2">
+        <div className="flex items-center justify-center gap-2 text-slate-600">
           <Shield size={16} />
           <span className="text-sm font-bold tracking-[0.2em] uppercase">SentinelShield v1.0</span>
         </div>
