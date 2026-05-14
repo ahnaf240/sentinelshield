@@ -1,0 +1,75 @@
+{
+  "name": "sentinel-shield",
+  "version": "1.0.0",
+  "description": "SentinelShield Cybersecurity Platform",
+  "main": "electron-main.js",
+  "homepage": "./",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next export -o out",
+
+    "electron:dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "next build && next export -o out && electron-builder",
+
+    "build:win": "npm run electron:build -- --win",
+    "build:linux": "npm run electron:build -- --linux",
+    "build:mac": "npm run electron:build -- --mac"
+  },
+  "dependencies": {
+    "next": "14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "recharts": "^2.12.7",
+    "framer-motion": "^11.2.10",
+    "lucide-react": "^0.383.0",
+    "tailwindcss": "^3.4.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0",
+    "@types/node": "^20",
+    "@types/react": "^18"
+  },
+  "build": {
+    "appId": "com.sentinelshield.app",
+    "productName": "SentinelShield",
+    "icon": "public/icon.png",
+    "files": [
+      "out/**/*",
+      "electron-main.js",
+      "electron-preload.js",
+      "public/**/*"
+    ],
+    "directories": {
+      "output": "dist-electron"
+    },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "public/icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "public/icon.png",
+      "category": "Utility"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "public/icon.icns"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SentinelShield"
+    }
+  }
+}
