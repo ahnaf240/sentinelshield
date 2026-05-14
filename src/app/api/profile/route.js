@@ -1,37 +1,59 @@
 import clientPromise from "../../../lib/mongodb";
 import { NextResponse } from "next/server";
 
-// ১. ডাটাবেস থেকে তথ্য আনা (GET)
+// প্রোফাইল ডাটা ডাটাবেস থেকে আনার জন্য (GET Request)
 export async function GET() {
   try {
     const client = await clientPromise;
-    if (!client) {
-      return NextResponse.json({ name: "Ahnaf (Local)", role: "Security Expert", status: "Offline" });
-    }
     const db = client.db("sentinel_db");
+    
+    // ডাটাবেস থেকে প্রথম প্রোফাইলটি খোঁজা হচ্ছে
     const profile = await db.collection("profile").findOne({});
-    return NextResponse.json(profile || { name: "Ahnaf", role: "Cybersecurity Analyst", status: "Active" });
-  } catch (e) {
-    return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
+
+    if (!profile) {
+      return NextResponse.json({ 
+        name: "Agent (Local)", 
+        designation: "Security Expert", 
+        status: "Offline",
+        bio: "Initialize your profile to start monitoring." 
+      });
+    }
+
+    return NextResponse.json(profile);
+  } catch (error) {
+    console.error("Database GET Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// ২. ডাটাবেসে তথ্য আপডেট করা (POST)
+// প্রোফাইল ডাটা আপডেট বা নতুন করে সেভ করার জন্য (POST Request)
 export async function POST(request) {
   try {
     const client = await clientPromise;
     const db = client.db("sentinel_db");
     const data = await request.json();
 
-    // ডাটা আপডেট করা (না থাকলে নতুন তৈরি হবে)
-    await db.collection("profile").updateOne(
+    // ডাটাবেসে যদি আগে প্রোফাইল থাকে তবে আপডেট করবে, না থাকলে নতুন তৈরি করবে (upsert: true)
+    const result = await db.collection("profile").updateOne(
       {}, 
-      { $set: data }, 
+      { 
+        $set: {
+          name: data.name,
+          designation: data.designation,
+          status: data.status,
+          bio: data.bio,
+          updatedAt: new Date()
+        } 
+      }, 
       { upsert: true }
     );
 
-    return NextResponse.json({ message: "Profile Updated Successfully" });
-  } catch (e) {
-    return NextResponse.json({ error: "Update Failed" }, { status: 500 });
+    return NextResponse.json({ 
+      success: true, 
+      message: "Sentinel Identity Updated Successfully" 
+    });
+  } catch (error) {
+    console.error("Database POST Error:", error);
+    return NextResponse.json({ error: "Failed to update database" }, { status: 500 });
   }
 }
