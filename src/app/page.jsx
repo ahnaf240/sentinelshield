@@ -16,8 +16,8 @@ import { Shield, Activity, Lock, Terminal } from 'lucide-react';
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   
-  // ১. ডিফল্টভাবে 'dashboard' সেট করা হয়েছে
-  const [activePage, setActivePage] = useState('dashboard');
+  // ১. ডিফল্ট স্টেট এখন 'hero' করা হয়েছে যাতে প্রথমে ল্যান্ডিং পেজ আসে
+  const [activePage, setActivePage] = useState('hero');
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,18 +33,27 @@ export default function Home() {
         <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
       </div>
 
-      {/* ২. Navbar এ প্রপস হিসেবে স্টেট পাঠানো হয়েছে */}
+      {/* ২. নেভবার সবসময় থাকবে */}
       <Navbar activePage={activePage} setActivePage={setActivePage} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 space-y-10 mt-16 md:mt-24">
         
-        {/* ৩. কন্ডিশনাল রেন্ডারিং: Dashboard Page */}
-        {activePage === 'dashboard' ? (
+        {/* ৩. কন্ডিশনাল রেন্ডারিং লজিক */}
+        
+        {activePage === 'hero' ? (
+          /* ল্যান্ডিং পেজ ভিউ */
+          <div className="animate-in fade-in duration-1000">
+            <HeroSection setActivePage={setActivePage} />
+          </div>
+        ) : activePage === 'dashboard' ? (
+          /* ড্যাশবোর্ড ভিউ */
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Hero Section & Status */}
+            {/* Header Area */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-8">
-              {/* HeroSection এর ভেতর setActivePage পাঠানো হয়েছে যাতে ওখানকার বাটনও কাজ করে */}
-              <HeroSection setActivePage={setActivePage} />
+              <div>
+                <h1 className="text-3xl font-bold tracking-tighter text-blue-400 font-mono">COMMAND_CENTER</h1>
+                <p className="text-slate-500 text-sm">System monitoring and active defense active.</p>
+              </div>
               
               <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 p-3 rounded-xl">
                 <div className="relative">
@@ -58,12 +67,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Core Dashboard Metrics */}
+            {/* Core Metrics */}
             <section>
               <Dashboard />
             </section>
 
-            {/* Threat Intelligence Visualization */}
+            {/* Visualization Grid */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
                 <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center gap-2">
@@ -79,7 +88,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Advanced Security Tools Grid */}
+            {/* Security Tools */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 px-2">
                 <Lock size={20} className="text-blue-500" />
@@ -99,13 +108,12 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Secondary Modules Section */}
             <section className="bg-slate-900/20 border border-slate-800/50 rounded-3xl p-2">
               <Modules />
             </section>
           </div>
         ) : (
-          /* ৪. অন্যান্য পেজ বা মডিউল রেন্ডারিং */
+          /* অন্যান্য মডিউল ভিউ (যেমন Threat Scanner) */
           <div className="min-h-[70vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
              <div className="text-center space-y-4 w-full">
                 <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -114,12 +122,8 @@ export default function Home() {
                 <h2 className="text-3xl font-bold uppercase tracking-tighter">
                    {activePage.replace('-', ' ')}
                 </h2>
-                <p className="text-slate-400 max-w-md mx-auto mb-10">
-                   Secure tunnel established. Initializing {activePage} interface...
-                </p>
-
-                {/* নির্দিষ্ট পেজের জন্য নির্দিষ্ট কম্পোনেন্ট */}
-                <div className="w-full max-w-6xl mx-auto">
+                
+                <div className="w-full max-w-6xl mx-auto mt-10">
                   {activePage === 'threat-scanner' && <AttackMap />}
                   {activePage === 'breach-monitor' && <BreachMonitor />}
                   {activePage === 'network-mapper' && <NetworkMapper />}
@@ -128,27 +132,25 @@ export default function Home() {
 
                 <button 
                   onClick={() => setActivePage('dashboard')}
-                  className="mt-8 px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs font-bold tracking-widest transition-colors"
+                  className="mt-12 px-8 py-3 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 rounded-xl text-xs font-bold tracking-widest transition-all text-blue-400"
                 >
-                  RETURN TO DASHBOARD
+                  BACK TO CONTROL CENTER
                 </button>
              </div>
           </div>
         )}
       </div>
 
-      {/* Floating AI Security Assistant */}
+      {/* Floating UI Elements */}
       <div className="fixed bottom-6 right-6 z-50">
         <AIChatbot />
       </div>
 
-      {/* Footer Branding */}
       <footer className="mt-20 py-10 border-t border-slate-900 text-center">
         <div className="flex items-center justify-center gap-2 text-slate-600 mb-2">
           <Shield size={16} />
           <span className="text-sm font-bold tracking-[0.2em] uppercase">SentinelShield v1.0</span>
         </div>
-        <p className="text-xs text-slate-500">Professional Cybersecurity Portfolio Dashboard</p>
       </footer>
     </main>
   );
