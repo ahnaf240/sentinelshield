@@ -11,12 +11,12 @@ import BreachMonitor from '../components/BreachMonitor';
 import NetworkMapper from '../components/NetworkMapper';
 import Modules from '../components/Modules';
 import AIChatbot from '../components/AIChatbot';
-// যদি আপনার আলাদা আলাদা বড় কম্পোনেন্ট থাকে তবে এগুলো ইমপোর্ট করুন, নাহলে নিচের লজিক দেখুন
 import { Shield, Activity, Lock, Terminal } from 'lucide-react';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
-  // ১. একটিভ পেজ ট্র্যাক করার জন্য স্টেট
+  
+  // ১. ডিফল্টভাবে 'dashboard' সেট করা হয়েছে
   const [activePage, setActivePage] = useState('dashboard');
 
   useEffect(() => {
@@ -33,17 +33,19 @@ export default function Home() {
         <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
       </div>
 
-      {/* ২. নেভবারে স্টেট এবং ফাংশন পাঠানো হয়েছে */}
+      {/* ২. Navbar এ প্রপস হিসেবে স্টেট পাঠানো হয়েছে */}
       <Navbar activePage={activePage} setActivePage={setActivePage} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 space-y-10 mt-16 md:mt-24">
         
-        {/* ৩. কন্ডিশনাল রেন্ডারিং: শুধু ড্যাশবোর্ড পেজে এগুলো দেখাবে */}
+        {/* ৩. কন্ডিশনাল রেন্ডারিং: Dashboard Page */}
         {activePage === 'dashboard' ? (
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Main Header & Status */}
+            {/* Hero Section & Status */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-8">
-              <HeroSection />
+              {/* HeroSection এর ভেতর setActivePage পাঠানো হয়েছে যাতে ওখানকার বাটনও কাজ করে */}
+              <HeroSection setActivePage={setActivePage} />
+              
               <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 p-3 rounded-xl">
                 <div className="relative">
                   <Activity className="text-green-500 animate-pulse" size={20} />
@@ -103,21 +105,33 @@ export default function Home() {
             </section>
           </div>
         ) : (
-          /* ৪. অন্য পেজগুলোর জন্য কন্টেন্ট (যেমন: Threat Scanner পেজ) */
-          <div className="min-h-[60vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
-             <div className="text-center space-y-4">
+          /* ৪. অন্যান্য পেজ বা মডিউল রেন্ডারিং */
+          <div className="min-h-[70vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
+             <div className="text-center space-y-4 w-full">
                 <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                    <Shield className="text-blue-500 w-10 h-10 animate-pulse" />
                 </div>
                 <h2 className="text-3xl font-bold uppercase tracking-tighter">
                    {activePage.replace('-', ' ')}
                 </h2>
-                <p className="text-slate-400 max-w-md mx-auto">
-                   This module is being initialized in the background. Secure tunnel established.
+                <p className="text-slate-400 max-w-md mx-auto mb-10">
+                   Secure tunnel established. Initializing {activePage} interface...
                 </p>
-                {/* আপনি এখানে নির্দিষ্ট পেজের জন্য নির্দিষ্ট কম্পোনেন্ট রেন্ডার করতে পারেন */}
-                {activePage === 'threat-scanner' && <div className="mt-10 w-full max-w-4xl"><AttackMap /></div>}
-                {activePage === 'breach-monitor' && <div className="mt-10 w-full max-w-4xl"><BreachMonitor /></div>}
+
+                {/* নির্দিষ্ট পেজের জন্য নির্দিষ্ট কম্পোনেন্ট */}
+                <div className="w-full max-w-6xl mx-auto">
+                  {activePage === 'threat-scanner' && <AttackMap />}
+                  {activePage === 'breach-monitor' && <BreachMonitor />}
+                  {activePage === 'network-mapper' && <NetworkMapper />}
+                  {activePage === 'link-shield' && <LinkShield />}
+                </div>
+
+                <button 
+                  onClick={() => setActivePage('dashboard')}
+                  className="mt-8 px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-full text-xs font-bold tracking-widest transition-colors"
+                >
+                  RETURN TO DASHBOARD
+                </button>
              </div>
           </div>
         )}

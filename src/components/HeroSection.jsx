@@ -71,26 +71,21 @@ function StatCounter({ value, label, color }) {
 function ShieldOrb() {
   return (
     <div className="relative flex items-center justify-center" style={{ width: 380, height: 380 }}>
-      {/* Outer ring */}
       <svg className="absolute" style={{ animation: 'rotateSlow 15s linear infinite' }} width="380" height="380" viewBox="0 0 380 380">
         <circle cx="190" cy="190" r="180" fill="none" stroke="rgba(0,212,255,0.15)" strokeWidth="1" strokeDasharray="8 6" />
         <circle cx="190" cy="190" r="160" fill="none" stroke="rgba(180,77,255,0.1)" strokeWidth="1" strokeDasharray="4 12" />
       </svg>
-      {/* Inner ring counter-rotating */}
       <svg className="absolute" style={{ animation: 'rotateSlow 8s linear infinite reverse' }} width="300" height="300" viewBox="0 0 300 300">
         <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(0,255,136,0.12)" strokeWidth="1" strokeDasharray="6 8" />
       </svg>
-      {/* Glow orb */}
       <div className="absolute rounded-full" style={{
         width: 200, height: 200,
         background: 'radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(180,77,255,0.06) 50%, transparent 70%)',
         filter: 'blur(20px)',
       }} />
-      {/* Main Shield Icon */}
       <div style={{ animation: 'float 5s ease-in-out infinite' }}>
         <Shield style={{ width: 120, height: 120, color: '#00d4ff', filter: 'drop-shadow(0 0 30px rgba(0,212,255,0.8))' }} />
       </div>
-      {/* Orbiting dots */}
       {[0, 60, 120, 180, 240, 300].map((deg, i) => (
         <div key={i} className="absolute" style={{
           width: 8, height: 8,
@@ -116,35 +111,42 @@ const features = [
 ];
 
 export default function HeroSection({ setActivePage }) {
-  // এপিআই থেকে ডেটা আনার জন্য নতুন স্টেট (ঐচ্ছিক কিন্তু সাজেস্টেড)
   const [sysData, setSysData] = useState(null);
+
+  // নিরাপদ নেভিগেশন ফাংশন
+  const handleNavigation = (page) => {
+    if (typeof setActivePage === 'function') {
+      setActivePage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      console.error("Sentinel Core: setActivePage function not found.");
+    }
+  };
 
   useEffect(() => {
     fetch('/api/system-status')
       .then(res => res.json())
       .then(data => setSysData(data))
-      .catch(err => console.log("System offline"));
+      .catch(() => console.log("System offline - Local mode active"));
   }, []);
 
   return (
-    <div className="relative pt-16">
-      {/* HERO */}
+    <div className="relative">
+      {/* HERO SECTION */}
       <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center py-20">
 
-            {/* Left Text */}
-            <div className="space-y-8">
-              {/* Badge */}
+            {/* Left Content */}
+            <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border"
                 style={{ borderColor: 'rgba(0,212,255,0.3)', background: 'rgba(0,212,255,0.05)' }}>
-                <div className="status-dot blue" />
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#00d4ff]" />
                 <span style={{ fontFamily: 'Share Tech Mono, monospace', color: '#00d4ff', fontSize: '0.75rem', letterSpacing: '2px' }}>
                   {sysData?.protocol || 'v2.4.1'} — ACTIVE PROTECTION
                 </span>
               </div>
 
-              {/* Main Headline */}
               <div>
                 <h1 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, lineHeight: 1.1 }}>
                   <span style={{ color: '#e0e8f0' }}>YOUR DIGITAL</span><br />
@@ -153,7 +155,6 @@ export default function HeroSection({ setActivePage }) {
                 </h1>
               </div>
 
-              {/* Typing text */}
               <div style={{ fontFamily: 'Share Tech Mono, monospace', color: '#00ff88', fontSize: '1rem', minHeight: '1.5rem' }}>
                 <TypingText texts={[
                   '> Scanning for threats...',
@@ -164,40 +165,46 @@ export default function HeroSection({ setActivePage }) {
                 ]} />
               </div>
 
-              {/* Description */}
               <p className="text-base leading-relaxed max-w-lg"
                 style={{ color: 'rgba(224,232,240,0.65)', fontFamily: 'Exo 2, sans-serif' }}>
                 SentinelShield gives everyday users a professional-grade cybersecurity command center.
-                Real-time protection, breach alerts, encrypted vaults — all in one futuristic platform.
+                Real-time protection, breach alerts, and encrypted vaults — all in one platform.
               </p>
 
-              {/* CTA Buttons */}
               <div className="flex flex-wrap gap-4">
-                <button className="neon-btn flex items-center gap-2" onClick={() => setActivePage('dashboard')}
-                  style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.8rem' }}>
+                <button 
+                  className="neon-btn flex items-center gap-2 cursor-pointer" 
+                  onClick={() => handleNavigation('dashboard')}
+                  style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.8rem', padding: '12px 28px' }}
+                >
                   <Shield className="w-4 h-4" />
                   ENTER COMMAND CENTER
                   <ChevronRight className="w-4 h-4" />
                 </button>
-                <button style={{
-                  padding: '12px 28px',
-                  background: 'rgba(180,77,255,0.1)',
-                  border: '1px solid rgba(180,77,255,0.3)',
-                  borderRadius: '4px',
-                  color: '#b44dff',
-                  fontFamily: 'Orbitron, sans-serif',
-                  fontSize: '0.8rem',
-                  letterSpacing: '2px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}>
-                  VIEW DEMO
+                <button 
+                  onClick={() => handleNavigation('dashboard')}
+                  style={{
+                    padding: '12px 28px',
+                    background: 'rgba(180,77,255,0.1)',
+                    border: '1px solid rgba(180,77,255,0.3)',
+                    borderRadius: '4px',
+                    color: '#b44dff',
+                    fontFamily: 'Orbitron, sans-serif',
+                    fontSize: '0.8rem',
+                    letterSpacing: '2px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(180,77,255,0.2)'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(180,77,255,0.1)'}
+                >
+                  VIEW LIVE DEMO
                 </button>
               </div>
             </div>
 
-            {/* Right — Shield Orb */}
-            <div className="flex justify-center lg:justify-end">
+            {/* Right Content */}
+            <div className="flex justify-center lg:justify-end animate-in fade-in zoom-in duration-1000">
               <ShieldOrb />
             </div>
           </div>
@@ -205,7 +212,7 @@ export default function HeroSection({ setActivePage }) {
       </section>
 
       {/* STATS BAR */}
-      <section className="py-12 px-4" style={{ borderTop: '1px solid rgba(0,212,255,0.08)', borderBottom: '1px solid rgba(0,212,255,0.08)' }}>
+      <section className="py-12 px-4 bg-white/5 backdrop-blur-sm" style={{ borderTop: '1px solid rgba(0,212,255,0.08)', borderBottom: '1px solid rgba(0,212,255,0.08)' }}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCounter value="2,400,000+" label="Threats Blocked" color="#00d4ff" />
           <StatCounter value="98%" label="Detection Rate" color="#00ff88" />
@@ -234,7 +241,7 @@ export default function HeroSection({ setActivePage }) {
                   style={{ transition: 'transform 0.3s ease' }}
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                  onClick={() => setActivePage('dashboard')}>
+                  onClick={() => handleNavigation('dashboard')}>
                   <div className="flex items-start gap-4">
                     <div className="p-3 rounded-lg" style={{ background: `${f.color}15`, border: `1px solid ${f.color}25` }}>
                       <Icon style={{ width: 22, height: 22, color: f.color }} />
@@ -248,7 +255,7 @@ export default function HeroSection({ setActivePage }) {
                       </p>
                     </div>
                   </div>
-                  <div className="mt-4 h-px" style={{ background: `linear-gradient(90deg, ${f.color}40, transparent)` }} />
+                  <div className="mt-4 h-px w-0 group-hover:w-full transition-all duration-500" style={{ background: `linear-gradient(90deg, ${f.color}40, transparent)` }} />
                 </div>
               );
             })}
@@ -256,10 +263,10 @@ export default function HeroSection({ setActivePage }) {
         </div>
       </section>
 
-      {/* CTA BANNER */}
+      {/* FINAL CTA */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="glass-card p-12 relative overflow-hidden">
+          <div className="glass-card p-12 relative overflow-hidden border border-blue-500/20">
             <div className="absolute inset-0 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at center, rgba(0,212,255,0.06) 0%, transparent 70%)' }} />
             <h2 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: 'clamp(1.2rem, 3vw, 2rem)', color: '#e0e8f0', marginBottom: '1rem' }}>
@@ -269,7 +276,7 @@ export default function HeroSection({ setActivePage }) {
             <p className="mb-8" style={{ color: 'rgba(224,232,240,0.6)', fontFamily: 'Exo 2, sans-serif' }}>
               Join 150,000+ users already protected by SentinelShield
             </p>
-            <button className="neon-btn" onClick={() => setActivePage('dashboard')}
+            <button className="neon-btn cursor-pointer" onClick={() => handleNavigation('dashboard')}
               style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.9rem', padding: '14px 40px' }}>
               ACTIVATE SHIELD NOW
             </button>
@@ -278,7 +285,7 @@ export default function HeroSection({ setActivePage }) {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 text-center" style={{ borderTop: '1px solid rgba(0,212,255,0.08)' }}>
+      <footer className="py-8 px-4 text-center border-t border-white/5">
         <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(224,232,240,0.3)', fontSize: '0.75rem' }}>
           © 2026 SENTINELSHIELD // ALL SYSTEMS OPERATIONAL // {sysData?.protocol || 'v2.4.1'}
         </p>
