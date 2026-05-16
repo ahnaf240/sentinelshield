@@ -11,6 +11,8 @@ import BreachMonitor from '../components/BreachMonitor';
 import NetworkMapper from '../components/NetworkMapper';
 import Modules from '../components/Modules';
 import AIChatbot from '../components/AIChatbot';
+import VoiceAssistant from '../components/VoiceAssistant'; 
+import EmergencySOS from '../components/EmergencySOS'; // নতুন ইমার্জেন্সি এসওএস মডিউল ইম্পোর্ট করা হলো
 import { Shield, Activity, Lock, Terminal } from 'lucide-react';
 
 export default function Home() {
@@ -26,11 +28,11 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
-  // ড্যাশবোর্ড বা অন্য পেজে সুইচ করার সময় অথরাইজেশন রিসেট হ্যান্ডলার (লোগো ক্লিকের জন্য)
+  // ড্যাশবোর্ড বা অন্য পেজে সুইচ করার সময় অথরাইজেশন রিসেট হ্যান্ডলার (লোগো ক্লিকের জন্য)
   const handlePageChange = (page) => {
     setActivePage(page);
     if (page === 'hero') {
-      setIsAuthorized(false); // হোম পেজে ফিরলে অথরাইজেশন আবার লক হয়ে যাবে
+      setIsAuthorized(false); // হোম পেজে ফিরলে অথরাইজেশন আবার লক হয়ে যাবে
     }
   };
 
@@ -44,7 +46,7 @@ export default function Home() {
         <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
       </div>
 
-      {/* নেভবার - যেখানে লোগো বা মেনু ক্লিকের স্টেট পাঠানো হয়েছে */}
+      {/* নেভবার - যেখানে লোগো বা মেনু ক্লিকের স্টেট পাঠানো হয়েছে */}
       <Navbar activePage={activePage} setActivePage={handlePageChange} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 space-y-10 mt-16 md:mt-24">
@@ -52,14 +54,14 @@ export default function Home() {
         {/* ১. ল্যান্ডিং পেজ (Hero Interface) */}
         {activePage === 'hero' ? (
           <div className="animate-in fade-in duration-1000">
-            {/* এখানে বাটন ক্লিক করলে সরাসরি ড্যাশবোর্ডে নিয়ে যাবে (যা পরে গেটওয়ে দেখাবে) */}
+            {/* এখানে বাটন ক্লিক করলে সরাসরি ড্যাশবোর্ডে নিয়ে যাবে (যা পরে গেটওয়ে দেখাবে) */}
             <HeroSection setActivePage={handlePageChange} />
           </div>
         ) : activePage === 'dashboard' ? (
           
-          /* ২. ড্যাশবোর্ড কন্ডিশনাল গেটওয়ে লজিক */
+          /* ২. ড্যাশবোর্ড কন্ডিশনাল গেটওয়ে লজিক */
           !isAuthorized ? (
-            /* গেটওয়ে পেজ: যদি ইউজার এখনো INITIATE ACCESS এ ক্লিক না করে থাকে */
+            /* গেটওয়ে পেজ: যদি ইউজার এখনো INITIATE ACCESS এ ক্লিক না করে থাকে */
             <div className="min-h-[70vh] flex items-center justify-center animate-in fade-in zoom-in-95 duration-500">
               <div className="bg-slate-900/40 border border-slate-800 p-12 rounded-3xl backdrop-blur-md shadow-2xl text-center max-w-md w-full space-y-8">
                 <div className="relative w-24 h-24 mx-auto">
@@ -83,7 +85,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            /* মূল ড্যাশবোর্ড ইন্টারফেস: অথরাইজেশন সফল হওয়ার পর */
+            /* মূল ড্যাশবোর্ড ইন্টারফেস: অথরাইজেশন সফল হওয়ার পর */
             <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
               {/* Command Center Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-8">
@@ -123,6 +125,11 @@ export default function Home() {
                     <IntrusionTracker />
                   </div>
                 </div>
+              </section>
+
+              {/* Emergency Response & SOS Section (নতুন থার্ড প্যানেল) */}
+              <section className="bg-slate-900/20 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-sm">
+                <EmergencySOS />
               </section>
 
               {/* Active Security Modules */}
@@ -178,8 +185,9 @@ export default function Home() {
         )}
       </div>
 
-      {/* Floating AI Chatbot */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Floating UI Elements (AI Chatbot & Voice Assistant) */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-end">
+        <VoiceAssistant setActivePage={handlePageChange} />
         <AIChatbot />
       </div>
 
