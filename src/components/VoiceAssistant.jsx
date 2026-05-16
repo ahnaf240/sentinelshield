@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Mic, MicOff, Radio, Volume2, Globe } from 'lucide-react';
 
 export default function VoiceAssistant({ setActivePage }) {
+  const [isMounted, setIsMounted] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [aiResponse, setAiResponse] = useState('');
@@ -13,6 +14,8 @@ export default function VoiceAssistant({ setActivePage }) {
   const shouldListenRef = useRef(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
     if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) return;
@@ -20,23 +23,18 @@ export default function VoiceAssistant({ setActivePage }) {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = false;
-
-      // এখানে আমরা মাল্টি-ল্যাঙ্গুয়েজ রিসিভার নোড ট্রিক ব্যবহার করছি
-      // কিছু ব্রাউজারে এটি স্পীচ প্রোফাইল অনুযায়ী গ্লোবাল ইনপুট অ্যাক্সেপ্ট করে
-      recognition.lang = typeof navigator !== 'undefined' ? navigator.language : 'en-US';
+      recognition.lang = navigator.language || 'en-US';
 
       recognition.onresult = (event) => {
         const current = event.resultIndex;
         const text = event.results[current][0].transcript;
         setTranscript(text);
-        
-        // গ্লোবাল এআই ব্রেনকে কল করা হচ্ছে যা দুনিয়ার যেকোনো ভাষা প্রসেস করতে পারে
         processGlobalAIIntelligence(text);
       };
 
       recognition.onend = () => {
         if (shouldListenRef.current) {
-          try { recognition.start(); } catch (e) { console.log(e); }
+          try { recognition.start(); } catch (e) { console.log("Microphone restart sequence active...", e); }
         }
       };
 
@@ -45,6 +43,7 @@ export default function VoiceAssistant({ setActivePage }) {
   }, []);
 
   const toggleVoiceEngine = () => {
+    if (!isMounted) return;
     if (isListening) {
       shouldListenRef.current = false;
       recognitionRef.current?.stop();
@@ -57,77 +56,100 @@ export default function VoiceAssistant({ setActivePage }) {
       try {
         recognitionRef.current?.start();
         setIsListening(true);
-        speak("Global language matrix activated. Speak now.", "en-US");
+        speak("Global language matrix activated. Speak now, Sir.", "en-US");
       } catch (e) {
         console.error(e);
       }
     }
   };
 
-  // --- মেগা গ্লোবাল এআই ব্রেন (দুনিয়ার যেকোনো ভাষা হ্যান্ডেল করার লজিক) ---
+  // --- মেগা গ্লোবাল এআই ব্রেন (দুনিয়ার যেকোনো ভাষা হ্যান্ডেল করার কমপ্লিট লজিক) ---
   const processGlobalAIIntelligence = (rawText) => {
     const text = rawText.toLowerCase().trim();
     let reply = "";
     let langCode = "en-US";
 
-    // ১. বাংলা স্ক্রিপ্ট বা রোমানাইজড বাংলা (Bengali / Banglish)
-    if (/[ক-ঞট-য়]/.test(rawText) || text.includes('kemon') || text.includes('hi') || text.includes('hello') || text.includes('kholo')) {
+    // 🇧🇩 ১. পিওর বাংলা স্ক্রিপ্ট বা রোমানাইজড বাংলিশ (Bengali / Banglish)
+    if (/[ক-ঞট-য়]/.test(rawText) || text.includes('kemon') || text.includes('hi') || text.includes('hello') || text.includes('kholo') || text.includes('kemon acho') || text.includes('valona')) {
+      
       if (text.includes('dashboard') || text.includes('ড্যাশবোর্ড') || text.includes('কন্ট্রোল')) {
         setActivePage('dashboard');
-        reply = "জি স্যার, আমি কন্ট্রোল সেন্টার ও ড্যাশবোর্ড স্ক্রিনটি ওপেন করেছি।";
-      } else if (text.includes('map') || text.includes('ম্যাপ')) {
+        reply = "জি স্যার, আমি কন্ট্রোল সেন্টার ও ড্যাশবোর্ড স্ক্রিনটি ওপেন করেছি। সকল সিকিউরিটি গেটওয়ে এনক্রিপ্টেড।";
+      } else if (text.includes('map') || text.includes('ম্যাপ') || text.includes('অ্যাটাক ম্যাপ')) {
         setActivePage('threat-scanner');
-        reply = "লাইভ গ্লোবাল থ্রেট ম্যাপ নোডটি চালু করা হয়েছে।";
+        reply = "লাইভ গ্লোবাল থ্রেট ম্যাপ নোডটি সফলভাবে চালু করা হয়েছে। নেটওয়ার্ক ট্রাফিক মনিটর করা হচ্ছে।";
+      } else if (text.includes('bondho') || text.includes('বন্ধ করো') || text.includes('হোমে যাও')) {
+        setActivePage('hero');
+        reply = "কন্ট্রোল সেন্টার বন্ধ করে মেইন গেটওয়েতে ফিরে যাচ্ছি, স্যার।";
       } else {
-        reply = "হ্যালো স্যার! আমি আপনার গ্লোবাল এআই। আপনার মনের ভাষা আমি বুঝতে পেরেছি। আপনার দিনটি কেমন যাচ্ছে বলুন?";
+        reply = "হ্যালো স্যার! আমি আপনার গ্লোবাল এআই। আপনার মনের ভাষা আমি বুঝতে পেরেছি। আপনার দিনটি কেমন যাচ্ছে বলুন? সব ঠিকঠাক তো?";
       }
       langCode = "bn-BD";
       setDetectedLang("Bengali / বাংলা");
     } 
     
-    // ②. হিন্দি ও উর্দু (Hindi / Urdu)
-    else if (text.includes('kaise ho') || text.includes('kya haal') || text.includes('namaste') || text.includes('shukriya') || text.includes('dikhau')) {
-      if (text.includes('dashboard')) {
+    // 🇮🇳 ②. হিন্দি ও উর্দু (Hindi / Urdu)
+    else if (text.includes('kaise ho') || text.includes('kya haal') || text.includes('namaste') || text.includes('shukriya') || text.includes('dikhau') || text.includes('shubh')) {
+      
+      if (text.includes('dashboard') || text.includes('कंट्रोल')) {
         setActivePage('dashboard');
-        reply = "जी सर, आपका डैशबोर्ड स्क्रीन लोड कर दिया गया है।";
+        reply = "जी सर, आपका डैशボード स्क्रीन लोड कर दिया गया है। सुरक्षा प्रणालियाँ सक्रिय हैं।";
+      } else if (text.includes('map') || text.includes('नक्शा')) {
+        setActivePage('threat-scanner');
+        reply = "लाइव थ्रेट मैप सक्रिय कर दिया गया है। ग्लोबल नोड्स सुरक्षित हैं।";
       } else {
-        reply = "नमस्ते सर। मैं आपकी भाषा समझ सकता हूँ। आपका दिन कैसा बीत रहा है?";
+        reply = "नमस्ते सर। मैं आपकी भाषा पूरी तरह समझ सकता हूँ। आपका दिन कैसा बीत रहा है? आपकी सेवा में तत्पर।";
       }
       langCode = "hi-IN";
       setDetectedLang("Hindi-Urdu / हिंदी");
     } 
     
-    // ③. স্প্যানিশ (Spanish - Hola, cómo estás)
-    else if (text.includes('hola') || text.includes('como estas') || text.includes('buenos') || text.includes('sistema')) {
-      reply = "Hola Señor. Entiendo tu idioma perfectamente. ¿Cómo va tu día hoy?";
+    // 🇪🇸 ③. স্প্যানিশ (Spanish)
+    else if (text.includes('hola') || text.includes('como estas') || text.includes('buenos') || text.includes('sistema') || text.includes('gracias')) {
+      
+      if (text.includes('dashboard') || text.includes('control')) {
+        setActivePage('dashboard');
+        reply = "Acceso concedido. Abriendo el Panel de Control Central ahora mismo, Señor.";
+      } else {
+        reply = "Hola Señor. Entiendo tu idioma perfectamente. El sistema está seguro. ¿Cómo va tu día hoy?";
+      }
       langCode = "es-ES";
       setDetectedLang("Spanish / Español");
     }
 
-    // ④. ফ্রেঞ্চ (French - Bonjour, comment ça va)
-    else if (text.includes('bonjour') || text.includes('salut') || text.includes('ca va')) {
-      reply = "Bonjour Monsieur. Je comprends votre langue. Comment se passe votre journée?";
+    // 🇫🇷 ④. ফ্রেঞ্চ (French)
+    else if (text.includes('bonjour') || text.includes('salut') || text.includes('ca va') || text.includes('merci')) {
+      
+      if (text.includes('dashboard') || text.includes('système')) {
+        setActivePage('dashboard');
+        reply = "Accès autorisé. Lancement du centre de contrôle principal.";
+      } else {
+        reply = "Bonjour Monsieur. Je comprends votre langue avec précision. Comment se passe votre journée ?";
+      }
       langCode = "fr-FR";
       setDetectedLang("French / Français");
     }
 
-    // ⑤. জাপানিজ (Japanese - Konnichiwa, Arigatou)
-    else if (text.includes('konnichiwa') || text.includes('arigatou') || text.includes('genki')) {
-      reply = "こんにちは先生。私はあなたの言葉 অনূদিত করতে পারি। 今日はどんな一日ですか？";
+    // 🇯🇵 ⑤. জাপানিজ (Japanese)
+    else if (text.includes('konnichiwa') || text.includes('arigatou') || text.includes('genki') || text.includes('hai')) {
+      reply = "こんにちは先生。システムは正常に動作しています。今日はどんな一日ですか？";
       langCode = "ja-JP";
       setDetectedLang("Japanese / 日本語");
     }
 
-    // ⑥. ডিফল্ট গ্লোবাল ইংলিশ (English)
+    // 🇺🇸 ⑥. ডিফল্ট গ্লোবাল ইংলিশ (Jarvis / Friday Mode)
     else {
-      if (text.includes('dashboard') || text.includes('control center')) {
+      if (text.includes('dashboard') || text.includes('control center') || text.includes('open')) {
         setActivePage('dashboard');
-        reply = "Access granted. Launching the Sentinel Control Center interface.";
-      } else if (text.includes('map') || text.includes('threat')) {
+        reply = "Access granted. Synchronizing data nodes and launching the Sentinel Control Center interface.";
+      } else if (text.includes('map') || text.includes('threat') || text.includes('show')) {
         setActivePage('threat-scanner');
-        reply = "Redirecting system nodes to Live Global Threat Map.";
+        reply = "Redirecting system sub-nodes to Live Global Threat Map. Mainframe is secure.";
+      } else if (text.includes('close') || text.includes('go home') || text.includes('exit')) {
+        setActivePage('hero');
+        reply = "Securing system core. Terminating dashboard interface and returning to primary gate.";
       } else {
-        reply = `Hello Sir. Universal Core processed your input: "${rawText}". All grids are completely secure. How is your day going?`;
+        reply = `Hello Sir. Universal Core processed your input: "${rawText}". All grids are completely secure and operational. How is your day going?`;
       }
       langCode = "en-US";
       setDetectedLang("English / Global");
@@ -139,14 +161,15 @@ export default function VoiceAssistant({ setActivePage }) {
     }
   };
 
-  // --- গ্লোবাল স্পীচ সিন্থেসিস ইঞ্জিন (যে ভাষায় ইনপুট, সেই ভাষায় আউটপুট) ---
+  // --- গ্লোবাল স্পীচ সিন্থেসিস ইঞ্জিন ---
   const speak = (sentence, lang) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel(); 
       const utterance = new SpeechSynthesisUtterance(sentence);
       utterance.lang = lang;
       
-      utterance.pitch = lang === 'en-US' ? 0.88 : 1.0; 
+      // সাই-ফাই গম্ভীর টোনের জন্য টিউনিং
+      utterance.pitch = lang === 'en-US' ? 0.85 : 1.0; 
       utterance.rate = 1.0; 
 
       const voices = window.speechSynthesis.getVoices();
@@ -156,6 +179,8 @@ export default function VoiceAssistant({ setActivePage }) {
       window.speechSynthesis.speak(utterance);
     }
   };
+
+  if (!isMounted) return null;
 
   return (
     <div className="bg-slate-950/90 border border-slate-800 p-4 rounded-2xl flex flex-col gap-3 backdrop-blur-xl max-w-sm shadow-[0_0_40px_rgba(30,58,138,0.3)] border-blue-500/20 transition-all duration-300">
