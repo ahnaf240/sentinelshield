@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Facebook, Instagram, Github, Mail, User, ShieldCheck, Loader2, Save } from 'lucide-react';
+import { Facebook, Instagram, Github, User, ShieldCheck, Loader2, Save } from 'lucide-react';
 
 export default function UserPortal() {
   const [profile, setProfile] = useState({
@@ -7,20 +9,25 @@ export default function UserPortal() {
     bio: '',
     status: 'Idle'
   });
-  const [loading, setLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [networkId, setNetworkId] = useState('');
 
-  // API থেকে ইউজারের বর্তমান তথ্য নিয়ে আসা
+  // ১. প্রথমবার মাউন্ট হওয়ার সময় API থেকে ডেটা এবং একটি স্থায়ী নেটওয়ার্ক আইডি জেনারেট করা
   useEffect(() => {
+    // রেন্ডার লুপ আটকানোর জন্য আইডি একবারই সেট হবে
+    setNetworkId(Math.random().toString(16).slice(2, 10).toUpperCase());
+
     const fetchUserData = async () => {
       try {
         const res = await fetch('/api/user-portal');
-        const data = await res.json();
-        setProfile({
-          username: data.name || '',
-          bio: data.role || '',
-          status: 'Authenticated'
-        });
+        if (res.ok) {
+          const data = await res.json();
+          setProfile({
+            username: data.name || '',
+            bio: data.role || '',
+            status: 'Authenticated'
+          });
+        }
       } catch (error) {
         console.error("Auth Error:", error);
       }
@@ -30,7 +37,7 @@ export default function UserPortal() {
 
   const handleInitialize = async () => {
     setIsInitializing(true);
-    // ১.৫ সেকেন্ডের একটি ফেক লোডিং ইফেক্ট যাতে মনে হয় ডেটাবেসে এনরোল হচ্ছে
+    // ১.৫ সেকেন্ডের একটি ফেক লোডিং ইফেক্ট যাতে মনে হয় ডেটাবেসে এনরোল হচ্ছে
     setTimeout(() => {
       setIsInitializing(false);
       alert("Profile Initialized in Sentinel Database!");
@@ -38,7 +45,7 @@ export default function UserPortal() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
+    <div className="space-y-6 animate-in fade-in duration-700 relative z-10">
       <div className="glass-card p-8 border-t-2 border-[#00ff88] bg-slate-900/50 backdrop-blur-md rounded-2xl border border-white/5 shadow-2xl shadow-[#00ff88]/5">
         
         {/* Header Section */}
@@ -61,17 +68,17 @@ export default function UserPortal() {
           <div className="space-y-4">
             <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-4">Connect Securely Via</p>
             
-            <button className="w-full py-3 bg-[#1877F215] border border-[#1877F250] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#1877F225] hover:border-[#1877F2] transition-all group">
+            <button type="button" className="w-full py-3 bg-[#1877F215] border border-[#1877F250] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#1877F225] hover:border-[#1877F2] transition-all group">
               <Facebook className="w-5 h-5 text-[#1877F2] group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">Facebook Login</span>
             </button>
             
-            <button className="w-full py-3 bg-[#E4405F15] border border-[#E4405F50] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#E4405F25] hover:border-[#E4405F] transition-all group">
+            <button type="button" className="w-full py-3 bg-[#E4405F15] border border-[#E4405F50] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#E4405F25] hover:border-[#E4405F] transition-all group">
               <Instagram className="w-5 h-5 text-[#E4405F] group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">Instagram Link</span>
             </button>
             
-            <button className="w-full py-3 bg-[#ffffff05] border border-[#ffffff20] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#ffffff10] hover:border-white/40 transition-all group">
+            <button type="button" className="w-full py-3 bg-[#ffffff05] border border-[#ffffff20] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#ffffff10] hover:border-white/40 transition-all group">
               <Github className="w-5 h-5 group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">GitHub Sync</span>
             </button>
@@ -79,7 +86,7 @@ export default function UserPortal() {
 
           {/* Profile Customization */}
           <div className="space-y-5 bg-white/5 p-6 rounded-2xl border border-white/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-2 opacity-10">
+            <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none">
               <User size={100} className="text-[#00ff88]" />
             </div>
 
@@ -108,10 +115,11 @@ export default function UserPortal() {
             </div>
 
             <button 
+              type="button"
               onClick={handleInitialize}
               disabled={isInitializing}
               className={`w-full py-3 flex items-center justify-center gap-2 font-bold font-orbitron rounded-xl transition-all shadow-[0_0_20px_rgba(0,255,136,0.2)] active:scale-95 ${
-                isInitializing ? 'bg-gray-700 text-gray-400' : 'bg-[#00ff88] text-[#050810] hover:bg-[#00cc6e]'
+                isInitializing ? 'bg-gray-700 text-gray-400 cursor-not-allowed shadow-none' : 'bg-[#00ff88] text-[#050810] hover:bg-[#00cc6e]'
               }`}
             >
               {isInitializing ? (
@@ -126,8 +134,8 @@ export default function UserPortal() {
       </div>
       
       {/* Footer System Log */}
-      <div className="flex justify-between items-center px-4">
-        <p className="text-[8px] text-gray-600 font-mono uppercase tracking-[0.5em]">Network ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}</p>
+      <div className="flex justify-between items-center px-4 select-none">
+        <p className="text-[8px] text-gray-600 font-mono uppercase tracking-[0.5em]">Network ID: {networkId}</p>
         <p className="text-[8px] text-gray-600 font-mono uppercase tracking-[0.5em]">Encryption: AES-256-GCM</p>
       </div>
     </div>

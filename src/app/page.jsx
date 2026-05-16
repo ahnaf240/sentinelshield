@@ -1,204 +1,178 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import HeroSection from '../components/HeroSection';
-import Dashboard from '../components/Dashboard';
-import AttackMap from '../components/AttackMap';
-import IntrusionTracker from '../components/IntrusionTracker';
-import LinkShield from '../components/LinkShield';
-import BreachMonitor from '../components/BreachMonitor';
-import NetworkMapper from '../components/NetworkMapper';
-import Modules from '../components/Modules';
-import AIChatbot from '../components/AIChatbot';
-import VoiceAssistant from '../components/VoiceAssistant'; 
-import EmergencySOS from '../components/EmergencySOS'; // নতুন ইমার্জেন্সি এসওএস মডিউল ইম্পোর্ট করা হলো
-import { Shield, Activity, Lock, Terminal } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Dashboard from '@/components/Dashboard';
+import ThreatScanner from '@/components/ThreatScanner';
+import BreachMonitor from '@/components/BreachMonitor';
+import VPNDashboard from '@/components/VPNDashboard';
+import HeroSection from '@/components/HeroSection';
+import VoiceAssistant from '@/components/VoiceAssistant';
+import UserPortal from '@/components/UserPortal';
+import SystemConfig from '@/components/SystemConfig';
+import { 
+  Shield, 
+  Terminal, 
+  Cpu, 
+  Network, 
+  Database, 
+  Activity, 
+  Server, 
+  Radio, 
+  Lock, 
+  Globe,
+  AlertTriangle,
+  FileText,
+  Sliders
+} from 'lucide-react';
 
 export default function Home() {
-  const [isMounted, setIsMounted] = useState(false);
-  
-  // শুরুতে ইউজার ল্যান্ডিং পেজে থাকবে
   const [activePage, setActivePage] = useState('hero');
-  
-  // ড্যাশবোর্ডের অথরাইজেশন চেক করার জন্য নতুন স্টেট
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [systemStatus, setSystemStatus] = useState('ONLINE');
+  const [securityScore, setSecurityScore] = useState(98);
+  const [firewallIntegrity, setFirewallIntegrity] = useState('99.4%');
+  const [networkLoad, setNetworkLoad] = useState('12.4 Gbps');
+  const [activeThreats, setActiveThreats] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
+  // Core system hydration layer to prevent browser mismatch
   useEffect(() => {
-    setIsMounted(true);
+    setMounted(true);
+    
+    // Simulating advanced backend monitoring ticker
+    const interval = setInterval(() => {
+      const fluctuations = ['99.4%', '99.2%', '99.5%', '99.3%'];
+      const loads = ['12.4 Gbps', '14.1 Gbps', '11.8 Gbps', '13.5 Gbps'];
+      
+      const randomValue = fluctuations[Math.floor(Math.random() * fluctuations.length)];
+      const randomLoad = loads[Math.floor(Math.random() * loads.length)];
+      
+      setFirewallIntegrity(randomValue);
+      setNetworkLoad(randomLoad);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // ড্যাশবোর্ড বা অন্য পেজে সুইচ করার সময় অথরাইজেশন রিসেট হ্যান্ডলার (লোগো ক্লিকের জন্য)
-  const handlePageChange = (page) => {
-    setActivePage(page);
-    if (page === 'hero') {
-      setIsAuthorized(false); // হোম পেজে ফিরলে অথরাইজেশন আবার লক হয়ে যাবে
-    }
-  };
-
-  if (!isMounted) return null;
+  if (!mounted) return null;
 
   return (
-    <main className="min-h-screen bg-[#020617] text-slate-100 selection:bg-blue-500/30 font-sans">
-      {/* Background Glow Effect */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-900/20 blur-[120px] rounded-full" />
-        <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
+    <main className="min-h-screen bg-slate-950 text-slate-100 font-mono relative overflow-x-hidden selection:bg-blue-500/30 selection:text-blue-200 antialiased">
+      
+      {/* ADVANCED PERSISTENT SCI-FI BACKGROUND VECTOR & MASK LAYERS */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none z-0" />
+      
+      {/* GLOBAL TOP AMBIENT NEON LINE EFFECT */}
+      <div className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.6)] z-50" />
+      
+      {/* COMPLEX OPERATIONAL COCKPIT HUD (HEADS UP DISPLAY) BAR */}
+      <div className="fixed top-14 left-1/2 -translate-x-1/2 bg-slate-950/80 border border-slate-900/80 px-5 py-1.5 rounded-full text-[9px] text-slate-500 uppercase tracking-widest flex items-center gap-5 backdrop-blur-md z-40 hidden lg:flex shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-blue-500/10">
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
+          SYSTEM_NODE: <span className="text-blue-400 font-bold">{systemStatus}</span>
+        </span>
+        <span className="text-slate-800">|</span>
+        <span className="flex items-center gap-1.5">
+          <Cpu size={11} className="text-purple-400" /> CORE_CIPHER: <span className="text-purple-400 font-bold">AES_256_GCM</span>
+        </span>
+        <span className="text-slate-800">|</span>
+        <span className="flex items-center gap-1.5">
+          <Shield size={11} className="text-emerald-400" /> SEC_SCORE: <span className="text-emerald-400 font-bold">{securityScore}%</span>
+        </span>
+        <span className="text-slate-800">|</span>
+        <span className="flex items-center gap-1.5">
+          <Radio size={11} className="text-cyan-400 animate-pulse" /> FW_INTEGRITY: <span className="text-cyan-400 font-bold">{firewallIntegrity}</span>
+        </span>
+        <span className="text-slate-800">|</span>
+        <span className="flex items-center gap-1.5">
+          <Activity size={11} className="text-amber-400" /> traffic_load: <span className="text-amber-400 font-bold">{networkLoad}</span>
+        </span>
+        <span className="text-slate-800">|</span>
+        <span className="flex items-center gap-1.5">
+          <Network size={11} className="text-indigo-400" /> VPN_GATE: <span className="text-indigo-400 font-bold">SECURE_SSL</span>
+        </span>
       </div>
 
-      {/* নেভবার - যেখানে লোগো বা মেনু ক্লিকের স্টেট পাঠানো হয়েছে */}
-      <Navbar activePage={activePage} setActivePage={handlePageChange} />
-
-      <div className="relative z-10 container mx-auto px-4 py-8 space-y-10 mt-16 md:mt-24">
+      {/* PERSISTENT FULL-MODULE INTERFACE LAYOUT STRUCTURE */}
+      <div className="flex flex-col min-h-screen relative z-10">
         
-        {/* ১. ল্যান্ডিং পেজ (Hero Interface) */}
-        {activePage === 'hero' ? (
-          <div className="animate-in fade-in duration-1000">
-            {/* এখানে বাটন ক্লিক করলে সরাসরি ড্যাশবোর্ডে নিয়ে যাবে (যা পরে গেটওয়ে দেখাবে) */}
-            <HeroSection setActivePage={handlePageChange} />
-          </div>
-        ) : activePage === 'dashboard' ? (
+        {/* TOP LEVEL NAVIGATION FRAMEWORK */}
+        <Navbar setActivePage={setActivePage} activePage={activePage} />
+
+        {/* CONTAINER SUB-SYSTEM FOR THE CYBERSECURITY VIEWPORTS */}
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-32 pb-36 relative">
           
-          /* ২. ড্যাশবোর্ড কন্ডিশনাল গেটওয়ে লজিক */
-          !isAuthorized ? (
-            /* গেটওয়ে পেজ: যদি ইউজার এখনো INITIATE ACCESS এ ক্লিক না করে থাকে */
-            <div className="min-h-[70vh] flex items-center justify-center animate-in fade-in zoom-in-95 duration-500">
-              <div className="bg-slate-900/40 border border-slate-800 p-12 rounded-3xl backdrop-blur-md shadow-2xl text-center max-w-md w-full space-y-8">
-                <div className="relative w-24 h-24 mx-auto">
-                  <div className="absolute inset-0 bg-emerald-500/10 blur-xl rounded-full animate-pulse" />
-                  <div className="w-24 h-24 border border-emerald-500/30 bg-slate-950 rounded-2xl flex items-center justify-center">
-                    <Shield className="text-emerald-400 w-12 h-12" />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold tracking-widest font-mono text-slate-200">SENTINEL</h2>
-                  <p className="text-emerald-500 text-xs tracking-widest font-mono font-bold uppercase">Authorization Required To Proceed</p>
-                </div>
-
-                <button 
-                  onClick={() => setIsAuthorized(true)}
-                  className="w-full py-4 bg-transparent hover:bg-emerald-500/5 border border-emerald-500/40 hover:border-emerald-400 rounded-xl font-mono text-xs font-bold tracking-widest text-emerald-400 transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]"
-                >
-                  INITIATE ACCESS
-                </button>
-              </div>
+          {/* VIEWPORT FRAME 01: HERO LANDING MAIN INTRO SECTION */}
+          {activePage === 'hero' && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out">
+              <HeroSection setActivePage={setActivePage} />
             </div>
-          ) : (
-            /* মূল ড্যাশবোর্ড ইন্টারফেস: অথরাইজেশন সফল হওয়ার পর */
-            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              {/* Command Center Header */}
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-8">
-                <div>
-                  <h1 className="text-3xl font-bold tracking-tighter text-blue-400 font-mono">COMMAND_CENTER</h1>
-                  <p className="text-slate-500 text-sm">Professional Security Monitoring Dashboard</p>
-                </div>
-                
-                <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 p-3 rounded-xl">
-                  <div className="relative">
-                    <Activity className="text-green-500 animate-pulse" size={20} />
-                    <div className="absolute inset-0 bg-green-500/20 blur-sm rounded-full" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">System Status</p>
-                    <p className="text-sm font-mono text-green-400">ENCRYPTED & SECURE</p>
-                  </div>
-                </div>
-              </div>
+          )}
 
-              {/* Core Metrics */}
-              <section>
-                <Dashboard />
-              </section>
-
-              {/* Data Visualization Grid */}
-              <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
-                  <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center gap-2">
-                    <Terminal size={18} className="text-blue-400" />
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-300">Live Global Attack Map</span>
-                  </div>
-                  <AttackMap />
-                </div>
-                <div className="lg:col-span-4 space-y-6">
-                  <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-1 backdrop-blur-sm shadow-xl">
-                    <IntrusionTracker />
-                  </div>
-                </div>
-              </section>
-
-              {/* Emergency Response & SOS Section (নতুন থার্ড প্যানেল) */}
-              <section className="bg-slate-900/20 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-sm">
-                <EmergencySOS />
-              </section>
-
-              {/* Active Security Modules */}
-              <section className="space-y-6">
-                <div className="flex items-center gap-2 px-2">
-                  <Lock size={20} className="text-blue-500" />
-                  <h2 className="text-xl font-bold tracking-tight">Active Defense Modules</h2>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="group transition-all duration-300 hover:translate-y-[-4px]">
-                    <LinkShield />
-                  </div>
-                  <div className="group transition-all duration-300 hover:translate-y-[-4px]">
-                    <BreachMonitor />
-                  </div>
-                  <div className="group transition-all duration-300 hover:translate-y-[-4px]">
-                    <NetworkMapper />
-                  </div>
-                </div>
-              </section>
-
-              {/* Additional Modules Footer Area */}
-              <section className="bg-slate-900/20 border border-slate-800/50 rounded-3xl p-2">
-                <Modules />
-              </section>
+          {/* VIEWPORT FRAME 02: EXECUTED COMMAND CORE CONTROL PANEL */}
+          {activePage === 'dashboard' && (
+            <div className="animate-in slide-in-from-bottom-6 duration-400 ease-out">
+              <Dashboard />
             </div>
-          )
-        ) : (
-          /* ৩. অন্যান্য সাব-মডিউল ভিউ */
-          <div className="min-h-[60vh] flex flex-col items-center justify-center animate-in zoom-in-95 duration-500">
-            <div className="text-center space-y-4 w-full">
-                <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Shield className="text-blue-500 w-10 h-10 animate-pulse" />
-                </div>
-                <h2 className="text-3xl font-bold uppercase tracking-tighter">
-                  {activePage.replace('-', ' ')}
-                </h2>
-                
-                <div className="w-full max-w-4xl mx-auto mt-6">
-                  {activePage === 'threat-scanner' && <AttackMap />}
-                  {activePage === 'breach-monitor' && <BreachMonitor />}
-                </div>
+          )}
 
-                <button 
-                  onClick={() => handlePageChange('dashboard')}
-                  className="mt-12 px-8 py-3 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 rounded-xl text-xs font-bold tracking-widest text-blue-400 transition-all"
-                >
-                  BACK TO CONTROL CENTER
-                </button>
+          {/* VIEWPORT FRAME 03: CYBER ATTACK MAP AND ACTIVE RISK THREAT SCANNER */}
+          {activePage === 'threat-scanner' && (
+            <div className="animate-in zoom-in-95 duration-300 ease-out">
+              <ThreatScanner />
             </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* Floating UI Elements (AI Chatbot & Voice Assistant) */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-end">
-        <VoiceAssistant setActivePage={handlePageChange} />
-        <AIChatbot />
-      </div>
+          {/* VIEWPORT FRAME 04: REAL-TIME BREACH MONITOR DATABASE CLUSTER */}
+          {activePage === 'breach-monitor' && (
+            <div className="animate-in fade-in duration-300">
+              <BreachMonitor />
+            </div>
+          )}
 
-      {/* Clean Production Footer */}
-      <footer className="mt-20 py-10 border-t border-slate-900 text-center">
-        <div className="flex items-center justify-center gap-2 text-slate-600 mb-2">
-          <Shield size={16} />
-          <span className="text-sm font-bold tracking-[0.2em] uppercase">SentinelShield v1.0</span>
+          {/* VIEWPORT FRAME 05: ENCRYPTED NETWORK TRAFFIC TUNNEL AND VPN SHIELD */}
+          {activePage === 'vpn-shield' && (
+            <div className="animate-in slide-in-from-right-6 duration-400 ease-out">
+              <VPNDashboard />
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 🆕 EXTENDED NAVIGATION GATEWAYS - INTEGRATING DROP-DOWN INTERFACE ACTIONS */}
+          {/* ========================================================================= */}
+
+          {/* VIEWPORT FRAME 06: ACCESS_PROFILE SECURE KEY CREDENTIAL USER PORTAL */}
+          {activePage === 'profile' && (
+            <div className="animate-in fade-in zoom-in-95 duration-400 ease-out">
+              <UserPortal />
+            </div>
+          )}
+
+          {/* VIEWPORT FRAME 07: CORE OPERATING MATRIX SYSTEM CONFIGURATION PANEL */}
+          {activePage === 'system-config' && (
+            <div className="animate-in fade-in zoom-in-95 duration-400 ease-out">
+              <SystemConfig />
+            </div>
+          )}
+
         </div>
-        <p className="text-xs text-slate-500 font-mono uppercase tracking-wider">Enterprise-Grade Security Ecosystem Portfolio</p>
-      </footer>
+      </div>
+
+      {/* FLOAT LAYER: INTERACTIVE GALACTIC VOICE ENGINE TERMINAL UTILITY */}
+      <div className="fixed bottom-6 right-6 z-50 group shadow-[0_0_50px_rgba(30,58,138,0.25)] border border-blue-500/10 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(59,130,246,0.35)]">
+        <VoiceAssistant setActivePage={setActivePage} />
+      </div>
+
+      {/* AMBIENT RADAR BOTTOM INFRASTRUCTURE HUD WATERMARK */}
+      <div className="fixed bottom-4 left-6 text-[9px] text-slate-600/80 tracking-[0.2em] pointer-events-none font-mono hidden md:block z-40 uppercase select-none">
+        Mainframe_Secure // Thread_Pool_Active // Enforcer_v2.4.1 // Secure_Shell_Initiated
+      </div>
+      
+      {/* ADDITIONAL BOTTOM SCI-FI SYSTEM DATA WATERMARK */}
+      <div className="fixed bottom-4 right-6 text-[9px] text-slate-700 tracking-wider pointer-events-none font-mono hidden xl:block z-40 select-none">
+        [ MEMORY_BLOCK: STABLE // PACKET_DROP: 0% // LINK_SPEED: 10GB/S // ACTIVE_THREATS: {activeThreats} ]
+      </div>
+
     </main>
   );
 }
