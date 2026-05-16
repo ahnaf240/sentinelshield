@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Dashboard from '@/components/Dashboard';
 import ThreatScanner from '@/components/ThreatScanner';
-import BreachMonitor from '@/components/BreachMonitor';
+import BreachMonitor from '@/components/BreachMonitorr'; // আপনার ফোল্ডারের বানান অনুযায়ী ডাবল 'rr' ফিক্স করা হলো
 import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
 import VoiceAssistant from '@/components/VoiceAssistant';
@@ -34,12 +34,20 @@ export default function Home() {
   const [networkLoad, setNetworkLoad] = useState('12.4 Gbps');
   const [activeThreats, setActiveThreats] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [terminalLogs, setTerminalLogs] = useState([]);
 
-  // Core system hydration layer to prevent browser mismatch
+  // Core system hydration layer and advanced background multi-ticker
   useEffect(() => {
     setMounted(true);
     
-    // Simulating advanced backend monitoring ticker
+    const logs = [
+      "CRITICAL: Firewall handshake protocol initiated...",
+      "SECURE_GATEWAY: Established encrypted tunnel on SSL_NODE_09",
+      "MONITOR: Mainframe memory allocation verified stable.",
+      "INTRUSION_DETECTOR: Running background scan... 0 anomalies found."
+    ];
+    setTerminalLogs(logs);
+
     const interval = setInterval(() => {
       const fluctuations = ['99.4%', '99.2%', '99.5%', '99.3%'];
       const loads = ['12.4 Gbps', '14.1 Gbps', '11.8 Gbps', '13.5 Gbps'];
@@ -49,7 +57,13 @@ export default function Home() {
       
       setFirewallIntegrity(randomValue);
       setNetworkLoad(randomLoad);
-    }, 5000);
+
+      // Dynamically pushing matrix simulation logs
+      setTerminalLogs(prev => [
+        `KERNEL_UPDATE: Packet transaction verified at ${new Date().toLocaleTimeString()}`,
+        ...prev.slice(0, 4)
+      ]);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -100,7 +114,7 @@ export default function Home() {
         <Navbar setActivePage={setActivePage} activePage={activePage} />
 
         {/* CONTAINER SUB-SYSTEM FOR THE CYBERSECURITY VIEWPORTS */}
-        <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-32 pb-36 relative">
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-32 pb-48 relative">
           
           {/* VIEWPORT FRAME 01: HERO LANDING MAIN INTRO SECTION */}
           {activePage === 'hero' && (
@@ -137,10 +151,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* ========================================================================= */}
-          {/* 🆕 EXTENDED NAVIGATION GATEWAYS - INTEGRATING DROP-DOWN INTERFACE ACTIONS */}
-          {/* ========================================================================= */}
-
           {/* VIEWPORT FRAME 06: ACCESS_PROFILE SECURE KEY CREDENTIAL USER PORTAL */}
           {activePage === 'profile' && (
             <div className="animate-in fade-in zoom-in-95 duration-400 ease-out">
@@ -155,6 +165,21 @@ export default function Home() {
             </div>
           )}
 
+        </div>
+      </div>
+
+      {/* LOWER MAINFRAME MATRIX TERMINAL DISPLAY GRID */}
+      <div className="fixed bottom-14 left-6 right-6 h-24 bg-slate-950/90 border border-slate-900 rounded-xl p-3 font-mono text-[10px] text-emerald-500/80 overflow-hidden hidden md:block backdrop-blur-md z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] border-emerald-500/5">
+        <div className="flex items-center gap-2 border-b border-slate-900 pb-1.5 mb-1.5 text-slate-500 uppercase tracking-wider text-[9px]">
+          <Terminal size={12} className="text-emerald-400 animate-pulse" />
+          <span>Live_Core_Kernel_Feed</span>
+        </div>
+        <div className="space-y-0.5 select-none opacity-85">
+          {terminalLogs.map((log, index) => (
+            <div key={index} className="truncate">
+              <span className="text-slate-600 mr-2">[{index}]</span> {log}
+            </div>
+          ))}
         </div>
       </div>
 
