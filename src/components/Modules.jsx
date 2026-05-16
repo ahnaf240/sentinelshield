@@ -58,21 +58,6 @@ const Modules = () => {
           </div>
         ))}
       </div>
-
-      <div className="p-6 bg-gradient-to-br from-slate-900/80 to-slate-950 border border-slate-800 rounded-3xl">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-blue-600/20 rounded-2xl">
-            <Terminal className="text-blue-400" size={24} />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-white mb-1">System Intelligence Active</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              আপনার ড্যাশবোর্ডের সকল সিকিউরিটি মডিউল এখন ইন্টিগ্রেটেড। এটি রিয়েল-টাইম থ্রেট অ্যানালাইসিস এবং নেটওয়ার্ক প্রোটেকশন নিশ্চিত করছে। 
-              গিটহাব রিপোজিটরিতে আপনার এই আপডেটটি পোর্টফোলিও হিসেবে অত্যন্ত কার্যকর হবে।
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
