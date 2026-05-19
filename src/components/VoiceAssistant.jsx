@@ -18,12 +18,16 @@ export default function VoiceAssistant({ setActivePage }) {
 
     if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) return;
+      if (!SpeechRecognition) {
+        console.warn("Web Speech API is not supported in this browser.");
+        return;
+      }
 
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = false;
-      recognition.lang = navigator.language || 'en-US';
+      // ইউজারের ওএস ল্যাঙ্গুয়েজ ডিফল্ট হিসেবে সেট করা
+      recognition.lang = typeof navigator !== 'undefined' ? navigator.language || 'en-US' : 'en-US';
 
       recognition.onresult = (event) => {
         const current = event.resultIndex;
@@ -33,32 +37,64 @@ export default function VoiceAssistant({ setActivePage }) {
       };
 
       recognition.onend = () => {
-        if (shouldListenRef.current) {
-          try { recognition.start(); } catch (e) { console.log("Microphone restart sequence active...", e); }
+        // যদি ইউজার ম্যানুয়ালি বন্ধ না করে, তবেই রিস্টার্ট হবে
+        if (shouldListenRef.current && recognitionRef.current) {
+          setTimeout(() => {
+            try {
+              if (shouldListenRef.current) {
+                recognitionRef.current.start();
+              }
+            } catch (e) {
+              console.log("Microphone auto-restart sequence active...", e.message);
+            }
+          }, 300); // ছোট একটা ডিলে দিলে ব্রাউজার থ্রেড লক হয় না
         }
       };
 
       recognitionRef.current = recognition;
     }
+
+    // কম্পোনেন্ট আনমাউন্ট হলে ভয়েস ইঞ্জিন ক্লিনআপ করা
+    return () => {
+      shouldListenRef.current = false;
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch(e) {}
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, []);
 
   const toggleVoiceEngine = () => {
-    if (!isMounted) return;
+    if (!isMounted || !recognitionRef.current) return;
+
     if (isListening) {
       shouldListenRef.current = false;
-      recognitionRef.current?.stop();
+      recognitionRef.current.stop();
       setIsListening(false);
       setTranscript('System Standing Down');
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
     } else {
       shouldListenRef.current = true;
       setTranscript('Listening for ANY language...');
       setAiResponse('');
+      setIsListening(true);
+      
       try {
-        recognitionRef.current?.start();
-        setIsListening(true);
+        recognitionRef.current.start();
         speak("Global language matrix activated. Speak now, Sir.", "en-US");
       } catch (e) {
-        console.error(e);
+        console.error("Failed to start speech recognition:", e);
+        // যদি অলরেডি স্টার্ট হয়ে থাকে তাহলে রিকোভার করা
+        if (e.name === 'InvalidStateError') {
+          // রানিং স্টেট ধরে নেওয়া হলো
+          setIsListening(true);
+        } else {
+          setIsListening(false);
+        }
       }
     }
   };
@@ -70,14 +106,14 @@ export default function VoiceAssistant({ setActivePage }) {
     let langCode = "en-US";
 
     // 🇧🇩 ১. পিওর বাংলা স্ক্রিপ্ট বা রোমানাইজড বাংলিশ (Bengali / Banglish)
-    if (/[ক-ঞট-য়]/.test(rawText) || text.includes('kemon') || text.includes('hi') || text.includes('hello') || text.includes('kholo') || text.includes('kemon acho') || text.includes('valona')) {
+    if (/[ক-ঞট-য়]/.test(rawText) || text.includes('kemon') || text.includes('hi') || text.includes('hello') || text.includes('kholo') || text.includes('kemon acho') || text.includes('valona')) {
       
       if (text.includes('dashboard') || text.includes('ড্যাশবোর্ড') || text.includes('কন্ট্রোল')) {
         setActivePage('dashboard');
         reply = "জি স্যার, আমি কন্ট্রোল সেন্টার ও ড্যাশবোর্ড স্ক্রিনটি ওপেন করেছি। সকল সিকিউরিটি গেটওয়ে এনক্রিপ্টেড।";
       } else if (text.includes('map') || text.includes('ম্যাপ') || text.includes('অ্যাটাক ম্যাপ')) {
         setActivePage('threat-scanner');
-        reply = "লাইভ গ্লোবাল থ্রেট ম্যাপ নোডটি সফলভাবে চালু করা হয়েছে। নেটওয়ার্ক ট্রাফিক মনিটর করা হচ্ছে।";
+        reply = "লাইভ গ্লোবাল থ্রেট ম্যাপ নোডটি সফলভাবে চালু করা হয়েছে। নেটওয়ার্ক ট্রাফিক মনিটর করা হচ্ছে।";
       } else if (text.includes('bondho') || text.includes('বন্ধ করো') || text.includes('হোমে যাও')) {
         setActivePage('hero');
         reply = "কন্ট্রোল সেন্টার বন্ধ করে মেইন গেটওয়েতে ফিরে যাচ্ছি, স্যার।";
@@ -93,7 +129,7 @@ export default function VoiceAssistant({ setActivePage }) {
       
       if (text.includes('dashboard') || text.includes('कंट्रोल')) {
         setActivePage('dashboard');
-        reply = "जी सर, आपका डैशボード स्क्रीन लोड कर दिया गया है। सुरक्षा प्रणालियाँ सक्रिय हैं।";
+        reply = "जी सर, आपका डैशबोर्ड स्क्रीन लोड कर दिया गया है। सुरक्षा प्रणालियाँ सक्रिय हैं।";
       } else if (text.includes('map') || text.includes('नक्शा')) {
         setActivePage('threat-scanner');
         reply = "लाइव थ्रेट मैप सक्रिय कर दिया गया है। ग्लोबल नोड्स सुरक्षित हैं।";
@@ -149,7 +185,7 @@ export default function VoiceAssistant({ setActivePage }) {
         setActivePage('hero');
         reply = "Securing system core. Terminating dashboard interface and returning to primary gate.";
       } else {
-        reply = `Hello Sir. Universal Core processed your input: "${rawText}". All grids are completely secure and operational. How is your day going?`;
+        reply = `Hello Sir. Universal Core processed your input: "${rawText}". All grids are completely secure and operational.`;
       }
       langCode = "en-US";
       setDetectedLang("English / Global");
@@ -161,10 +197,11 @@ export default function VoiceAssistant({ setActivePage }) {
     }
   };
 
-  // --- গ্লোবাল স্পীচ সিন্থেসিস ইঞ্জিন ---
+  // --- গ্লোবাল স্পীচ সিন্থেসিস ইঞ্জিন (অ্যাসিনক্রোনাস ভয়েস লোড ফিক্সড) ---
   const speak = (sentence, lang) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel(); 
+      window.speechSynthesis.cancel(); // আগের কোনো অডিও চলতে থাকলে ক্লিয়ার হবে
+      
       const utterance = new SpeechSynthesisUtterance(sentence);
       utterance.lang = lang;
       
@@ -172,11 +209,20 @@ export default function VoiceAssistant({ setActivePage }) {
       utterance.pitch = lang === 'en-US' ? 0.85 : 1.0; 
       utterance.rate = 1.0; 
 
-      const voices = window.speechSynthesis.getVoices();
-      const selectedVoice = voices.find(v => v.lang.includes(lang));
-      if (selectedVoice) utterance.voice = selectedVoice;
+      const assignVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        // সংশ্লিষ্ট ভাষার বেস্ট ভয়েস ম্যাচ করানো
+        const selectedVoice = voices.find(v => v.lang.toLowerCase().includes(lang.toLowerCase())) || voices[0];
+        if (selectedVoice) utterance.voice = selectedVoice;
+        window.speechSynthesis.speak(utterance);
+      };
 
-      window.speechSynthesis.speak(utterance);
+      // ক্রোম/সফারি ব্রাউজারের ভয়েস অ্যাসিনক্রোনাসলি লোড হওয়ার প্রবলেম ফিক্স
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = assignVoice;
+      } else {
+        assignVoice();
+      }
     }
   };
 
@@ -190,10 +236,11 @@ export default function VoiceAssistant({ setActivePage }) {
           className={`p-4 rounded-xl transition-all duration-300 relative ${
             isListening 
               ? 'bg-blue-500/20 text-blue-400 ring-2 ring-blue-500/30 animate-pulse' 
-              : 'bg-red-600/10 text-red-400 hover:bg-red-600/20'
+              : 'bg-slate-900 text-slate-400 hover:bg-slate-800'
           }`}
+          title={isListening ? "Stop Listening" : "Start Listening"}
         >
-          {isListening ? <Radio size={20} className="animate-spin duration-3000" /> : <MicOff size={20} />}
+          {isListening ? <Radio size={20} className="animate-pulse duration-1000" /> : <Mic size={20} />}
         </button>
         
         <div className="flex-1 min-w-0 font-mono">

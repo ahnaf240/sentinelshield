@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { ShieldAlert, Search, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -34,10 +36,10 @@ const BreachMonitor = () => {
   };
 
   return (
-    <div className="bg-slate-900 p-6 rounded-xl border border-red-500/30 animate-in fade-in duration-500">
+    <div className="bg-slate-900 p-6 rounded-xl border border-red-500/30 transition-all duration-500">
       <div className="flex items-center gap-2 mb-6">
         <ShieldAlert className="text-red-500" />
-        <h2 className="text-xl font-bold text-white font-orbitron uppercase tracking-wider">Dark Web Breach Monitor</h2>
+        <h2 className="text-xl font-bold text-white font-mono uppercase tracking-wider">Dark Web Breach Monitor</h2>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -69,7 +71,7 @@ const BreachMonitor = () => {
 
       {/* Safe State */}
       {status === 'safe' && (
-        <div className="bg-green-500/10 border border-green-500/50 p-4 rounded-lg flex items-center gap-3 animate-in zoom-in duration-300">
+        <div className="bg-green-500/10 border border-green-500/50 p-4 rounded-lg flex items-center gap-3 transition-all duration-300">
           <CheckCircle className="text-green-500 shrink-0" />
           <p className="text-green-200 text-sm italic">Good news! Your email was not found in any known data breaches.</p>
         </div>
@@ -77,16 +79,16 @@ const BreachMonitor = () => {
 
       {/* Breached State */}
       {status === 'breached' && breachData && (
-        <div className="bg-red-500/10 border border-red-500/50 p-4 rounded-lg flex flex-col gap-3 animate-in shake-in duration-300">
+        <div className="bg-red-500/10 border border-red-500/50 p-4 rounded-lg flex flex-col gap-3 transition-all duration-300">
           <div className="flex items-center gap-3">
             <ShieldAlert className="text-red-500 shrink-0" />
-            <p className="text-red-200 text-sm font-bold">ALERT! This email was found in {breachData.breaches.length} data breaches.</p>
+            <p className="text-red-200 text-sm font-bold">ALERT! This email was found in {breachData.breaches?.length || 0} data breaches.</p>
           </div>
           
           <div className="mt-2 space-y-2">
             <p className="text-[10px] text-gray-400 uppercase font-mono">Compromised Platforms:</p>
             <div className="flex flex-wrap gap-2">
-              {breachData.breaches.map((b, i) => (
+              {breachData.breaches?.map((b, i) => (
                 <span key={i} className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded border border-red-500/30">
                   {b}
                 </span>

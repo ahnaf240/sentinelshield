@@ -7,7 +7,7 @@ import ThreatScanner from '@/components/ThreatScanner';
 import BreachMonitor from '@/components/BreachMonitor';
 import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
-import VoiceAssistant from '@/components/Voiceassistant';
+import VoiceAssistant from '@/components/VoiceAssistant';
 import UserPortal from '@/components/UserPortal';
 import SystemConfig from '@/components/SystemConfig';
 import { 
@@ -78,9 +78,12 @@ export default function Home() {
         setActiveThreats(prev => (prev === 0 ? 1 : 0));
       }
 
+      // Safe client-only timestamp string for logs
+      const timeString = new Date().toLocaleTimeString();
+
       // Dynamically pushing matrix simulation logs to terminal feed
       setTerminalLogs(prev => [
-        `KERNEL_UPDATE: Packet transaction verified at ${new Date().toLocaleTimeString()} [OK]`,
+        `KERNEL_UPDATE: Packet transaction verified at ${timeString} [OK]`,
         `NODE_SYNC: Cluster infrastructure database synchronization completed`,
         ...prev.slice(0, 3)
       ]);
@@ -98,7 +101,7 @@ export default function Home() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none z-0" />
       
       {/* GLOBAL TOP AMBIENT NEON LINE EFFECT */}
-      <div className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-right from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.6)] z-50" />
+      <div className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.6)] z-50" />
       
       {/* COMPLEX OPERATIONAL COCKPIT HUD (HEADS UP DISPLAY) BAR */}
       <div className="fixed top-14 left-1/2 -translate-x-1/2 bg-slate-950/80 border border-slate-900/80 px-5 py-1.5 rounded-full text-[9px] text-slate-500 uppercase tracking-widest flex items-center gap-5 backdrop-blur-md z-40 hidden lg:flex shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-blue-500/10">
@@ -139,49 +142,49 @@ export default function Home() {
           
           {/* VIEWPORT FRAME 01: HERO LANDING MAIN INTRO SECTION */}
           {activePage === 'hero' && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out">
+            <div className="transition-all duration-500">
               <HeroSection setActivePage={setActivePage} />
             </div>
           )}
 
           {/* VIEWPORT FRAME 02: EXECUTED COMMAND CORE CONTROL PANEL */}
           {activePage === 'dashboard' && (
-            <div className="animate-in slide-in-from-bottom-6 duration-400 ease-out">
+            <div className="transition-all duration-400">
               <Dashboard />
             </div>
           )}
 
           {/* VIEWPORT FRAME 03: CYBER ATTACK MAP AND ACTIVE RISK THREAT SCANNER */}
           {activePage === 'threat-scanner' && (
-            <div className="animate-in zoom-in-95 duration-300 ease-out">
+            <div className="transition-all duration-300">
               <ThreatScanner />
             </div>
           )}
 
           {/* VIEWPORT FRAME 04: REAL-TIME BREACH MONITOR DATABASE CLUSTER */}
           {activePage === 'breach-monitor' && (
-            <div className="animate-in fade-in duration-300">
+            <div className="transition-all duration-300">
               <BreachMonitor />
             </div>
           )}
 
           {/* VIEWPORT FRAME 05: ENCRYPTED NETWORK TRAFFIC TUNNEL AND VPN SHIELD */}
           {activePage === 'vpn-shield' && (
-            <div className="animate-in slide-in-from-right-6 duration-400 ease-out">
+            <div className="transition-all duration-400">
               <VPNDashboard />
             </div>
           )}
 
           {/* VIEWPORT FRAME 06: ACCESS_PROFILE SECURE KEY CREDENTIAL USER PORTAL */}
           {activePage === 'profile' && (
-            <div className="animate-in fade-in zoom-in-95 duration-400 ease-out">
+            <div className="transition-all duration-400">
               <UserPortal />
             </div>
           )}
 
           {/* VIEWPORT FRAME 07: CORE OPERATING MATRIX SYSTEM CONFIGURATION PANEL */}
           {activePage === 'system-config' && (
-            <div className="animate-in fade-in zoom-in-95 duration-400 ease-out">
+            <div className="transition-all duration-400">
               <SystemConfig />
             </div>
           )}

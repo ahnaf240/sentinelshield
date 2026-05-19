@@ -11,10 +11,12 @@ export default function UserPortal() {
   });
   const [isInitializing, setIsInitializing] = useState(false);
   const [networkId, setNetworkId] = useState('');
+  const [mounted, setMounted] = useState(false);
 
-  // ১. প্রথমবার মাউন্ট হওয়ার সময় API থেকে ডেটা এবং একটি স্থায়ী নেটওয়ার্ক আইডি জেনারেট করা
+  // ১. প্রথমবার মাউন্ট হওয়ার সময় API থেকে ডেটা এবং একটি স্থায়ী নেটওয়ার্ক আইডি জেনারেট করা
   useEffect(() => {
-    // রেন্ডার লুপ আটকানোর জন্য আইডি একবারই সেট হবে
+    setMounted(true);
+    // রেন্ডার লুপ এবং হাইড্রেশন এরর আটকানোর জন্য আইডি শুধুমাত্র ক্লায়েন্টে একবারই সেট হবে
     setNetworkId(Math.random().toString(16).slice(2, 10).toUpperCase());
 
     const fetchUserData = async () => {
@@ -44,13 +46,16 @@ export default function UserPortal() {
     }, 1500);
   };
 
+  // হাইড্রেশন সিকিউরিটি চেক
+  if (!mounted) return null;
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 relative z-10">
+    <div className="space-y-6 transition-all duration-700 relative z-10">
       <div className="glass-card p-8 border-t-2 border-[#00ff88] bg-slate-900/50 backdrop-blur-md rounded-2xl border border-white/5 shadow-2xl shadow-[#00ff88]/5">
         
         {/* Header Section */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="font-orbitron text-xl text-white flex items-center gap-3 tracking-tighter">
+          <h2 className="font-mono text-xl text-white flex items-center gap-3 tracking-tighter">
             <div className="p-2 bg-[#00ff88]/10 rounded-lg">
               <ShieldCheck className="text-[#00ff88]" size={24} />
             </div>
@@ -68,17 +73,17 @@ export default function UserPortal() {
           <div className="space-y-4">
             <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-4">Connect Securely Via</p>
             
-            <button type="button" className="w-full py-3 bg-[#1877F215] border border-[#1877F250] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#1877F225] hover:border-[#1877F2] transition-all group">
+            <button type="button" className="w-full py-3 bg-[#1877F2]/10 border border-[#1877F2]/30 text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#1877F2]/20 hover:border-[#1877F2] transition-all group">
               <Facebook className="w-5 h-5 text-[#1877F2] group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">Facebook Login</span>
             </button>
             
-            <button type="button" className="w-full py-3 bg-[#E4405F15] border border-[#E4405F50] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#E4405F25] hover:border-[#E4405F] transition-all group">
+            <button type="button" className="w-full py-3 bg-[#E4405F]/10 border border-[#E4405F]/30 text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#E4405F]/20 hover:border-[#E4405F] transition-all group">
               <Instagram className="w-5 h-5 text-[#E4405F] group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">Instagram Link</span>
             </button>
             
-            <button type="button" className="w-full py-3 bg-[#ffffff05] border border-[#ffffff20] text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-[#ffffff10] hover:border-white/40 transition-all group">
+            <button type="button" className="w-full py-3 bg-white/5 border border-white/10 text-white/90 flex items-center justify-center gap-3 rounded-xl hover:bg-white/10 hover:border-white/30 transition-all group">
               <Github className="w-5 h-5 group-hover:scale-110 transition-transform" /> 
               <span className="text-sm font-medium">GitHub Sync</span>
             </button>
@@ -118,7 +123,7 @@ export default function UserPortal() {
               type="button"
               onClick={handleInitialize}
               disabled={isInitializing}
-              className={`w-full py-3 flex items-center justify-center gap-2 font-bold font-orbitron rounded-xl transition-all shadow-[0_0_20px_rgba(0,255,136,0.2)] active:scale-95 ${
+              className={`w-full py-3 flex items-center justify-center gap-2 font-bold font-mono rounded-xl transition-all shadow-[0_0_20px_rgba(0,255,136,0.1)] active:scale-95 ${
                 isInitializing ? 'bg-gray-700 text-gray-400 cursor-not-allowed shadow-none' : 'bg-[#00ff88] text-[#050810] hover:bg-[#00cc6e]'
               }`}
             >
