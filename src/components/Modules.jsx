@@ -14,9 +14,6 @@ export { default as HeroSection } from './HeroSection';
 export { default as Navbar } from './Navbar';
 export { default as NewsFeed } from './NewsFeed';
 
-// 🎯 এই যে আপনার সেই কাঙ্ক্ষিত মোক্ষম ফিক্স!
-export { default as VoiceAssistant } from './VoiceAssistant'; 
-
 // --- সিকিউরিটি এবং থ্রেট অ্যানালাইসিস মডিউলস ---
 export { default as IntrusionTracker } from './IntrusionTracker';
 export { default as LinkShield } from './LinkShield';
@@ -26,10 +23,6 @@ export { default as PhishGuard } from './PhishGuard';
 export { default as PrivacyAudit } from './PrivacyAudit';
 export { default as ThreatScanner } from './ThreatScanner';
 export { default as VPNDashboard } from './VPNDashboard';
-
-// --- Admin এবং পোর্টাল ফিচারসমূহ ---
-export { default as UserPortal } from './UserPortal';
-export { default as SystemConfig } from './SystemConfig';
 
 // --- এডভান্সড ফিচারসমূহ ---
 export { default as ReportStorage } from './ReportStorage';
