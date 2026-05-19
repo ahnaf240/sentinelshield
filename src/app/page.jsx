@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Dashboard from '@/components/Dashboard';
 import ThreatScanner from '@/components/ThreatScanner';
-import BreachMonitor from '@/components/BreachMonitorr';
+import BreachMonitor from '@/components/BreachMonitor';
 import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
 import VoiceAssistant from '@/components/VoiceAssistant';
