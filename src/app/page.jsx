@@ -7,7 +7,7 @@ import ThreatScanner from '@/components/ThreatScanner';
 import BreachMonitor from '@/components/BreachMonitor';
 import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
-import VoiceAssistant from '@/components/VoiceAssistant';
+import VoiceAssistant from '@/components/Voiceassistant';
 import UserPortal from '@/components/UserPortal';
 import SystemConfig from '@/components/SystemConfig';
 import { 
