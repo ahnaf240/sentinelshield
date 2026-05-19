@@ -2,31 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import Dashboard from '@/components/Dashboard';
-import ThreatScanner from '@/components/ThreatScanner';
-import BreachMonitor from '@/components/BreachMonitor';
-import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
 import VoiceAssistant from '@/components/VoiceAssistant';
 import UserPortal from '@/components/UserPortal';
 import SystemConfig from '@/components/SystemConfig';
+
+// সব সাব-মডিউল এখন সরাসরি আমাদের তৈরি করা Modules.jsx থেকে এক লাইনে ইমপোর্ট হবে
+import { 
+  Dashboard, 
+  ThreatScanner, 
+  BreachMonitor, 
+  VPNDashboard 
+} from '@/components/Modules';
+
 import { 
   Shield, 
   Terminal, 
   Cpu, 
   Network, 
-  Database, 
   Activity, 
-  Server, 
-  Radio, 
-  Lock, 
-  Globe,
-  AlertTriangle,
-  FileText,
-  Sliders,
-  TerminalSquare,
-  ShieldAlert,
-  Fingerprint
+  Radio 
 } from 'lucide-react';
 
 export default function Home() {
@@ -78,7 +73,7 @@ export default function Home() {
         setActiveThreats(prev => (prev === 0 ? 1 : 0));
       }
 
-      // Safe client-only timestamp string for logs
+      // Safe client-only timestamp string for logs to prevent hydration errors
       const timeString = new Date().toLocaleTimeString();
 
       // Dynamically pushing matrix simulation logs to terminal feed
