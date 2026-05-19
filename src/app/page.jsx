@@ -5,11 +5,13 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import UserPortal from '@/components/UserPortal';
 
-// সরাসরি ফাইল থেকে নিখুঁত ইমপোর্ট (কোনো Modules.jsx এর ঝামেলা আর রইল না)
-import Dashboard from '@/components/Dashboard';
-import ThreatScanner from '@/components/ThreatScanner';
-import BreachMonitor from '@/components/BreachMonitor';
-import VPNDashboard from '@/components/VPNDashboard';
+// আপনার আগের সেই অরিজিনাল ব্যারেল ইমপোর্ট
+import { 
+  Dashboard, 
+  ThreatScanner, 
+  BreachMonitor, 
+  VPNDashboard 
+} from '@/components/Modules';
 
 import { 
   Shield, 
