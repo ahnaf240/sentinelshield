@@ -4,7 +4,7 @@ import React from 'react';
 import { Shield, Lock, Zap, Cpu, Globe } from 'lucide-react';
 
 // ==========================================
-// 🛡️ ১. সাব-মডিউল রি-एक्सপোর্ট (Page.jsx এর জন্য)
+// 🛡️ ১. সাব-মডিউল রি-এক্সপোর্ট (Page.jsx এর জন্য)
 // ==========================================
 export { default as AIChatbot } from './AIChatbot';
 export { default as AttackMap } from './AttackMap';
@@ -13,9 +13,9 @@ export { default as Dashboard } from './Dashboard';
 export { default as HeroSection } from './HeroSection';
 export { default as Navbar } from './Navbar';
 export { default as NewsFeed } from './NewsFeed';
-export { default as VoiceAssistant } from './VoiceAssistant';
-export { default as UserPortal } from './UserPortal';
-export { default as SystemConfig } from './SystemConfig';
+
+// 🎯 এই যে আপনার সেই কাঙ্ক্ষিত মোক্ষম ফিক্স!
+export { default as VoiceAssistant } from './VoiceAssistant'; 
 
 // --- সিকিউরিটি এবং থ্রেট অ্যানালাইসিস মডিউলস ---
 export { default as IntrusionTracker } from './IntrusionTracker';
@@ -26,6 +26,10 @@ export { default as PhishGuard } from './PhishGuard';
 export { default as PrivacyAudit } from './PrivacyAudit';
 export { default as ThreatScanner } from './ThreatScanner';
 export { default as VPNDashboard } from './VPNDashboard';
+
+// --- Admin এবং পোর্টাল ফিচারসমূহ ---
+export { default as UserPortal } from './UserPortal';
+export { default as SystemConfig } from './SystemConfig';
 
 // --- এডভান্সড ফিচারসমূহ ---
 export { default as ReportStorage } from './ReportStorage';
@@ -70,5 +74,4 @@ const Modules = () => {
   );
 };
 
-// ডিফল্ট এক্সপোর্ট হিসেবে শুধু কম্পোনেন্টটি যাচ্ছে
 export default Modules;
