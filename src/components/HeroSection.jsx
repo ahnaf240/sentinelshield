@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Shield, Eye, Lock, Zap, Globe, AlertTriangle, ChevronRight, Activity } from 'lucide-react';
 
-// Animated typing text
+// Animated typing text Component
 function TypingText({ texts }) {
   const [index, setIndex] = useState(0);
   const [displayed, setDisplayed] = useState('');
@@ -10,6 +10,8 @@ function TypingText({ texts }) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (!texts || texts.length === 0) return;
+    
     const current = texts[index];
     let timeout;
 
@@ -35,20 +37,26 @@ function TypingText({ texts }) {
   return (
     <span>
       {displayed}
-      <span className="animate-pulse" style={{ color: '#00d4ff' }}>|</span>
+      <span className="animate-pulse ml-0.5" style={{ color: '#00d4ff' }}>|</span>
     </span>
   );
 }
 
-// Stat counter
+// Stat counter Component
 function StatCounter({ value, label, color }) {
   const [count, setCount] = useState(0);
+
   useEffect(() => {
-    const target = parseInt(value.replace(/\D/g, ''));
+    const target = parseInt(value.replace(/\D/g, ''), 10) || 0;
+    if (target === 0) return;
+
     const step = Math.ceil(target / 60);
     const timer = setInterval(() => {
       setCount(prev => {
-        if (prev + step >= target) { clearInterval(timer); return target; }
+        if (prev + step >= target) {
+          clearInterval(timer);
+          return target;
+        }
         return prev + step;
       });
     }, 30);
@@ -56,44 +64,38 @@ function StatCounter({ value, label, color }) {
   }, [value]);
 
   return (
-    <div className="glass-card p-6 text-center">
+    <div className="glass-card p-6 text-center bg-slate-900/30 border border-slate-800 rounded-xl backdrop-blur-sm">
       <div className="text-3xl font-bold mb-1" style={{ color, fontFamily: 'Orbitron, sans-serif' }}>
         {count.toLocaleString()}{value.includes('+') ? '+' : value.includes('%') ? '%' : ''}
       </div>
-      <div className="text-sm" style={{ color: 'rgba(224,232,240,0.6)', fontFamily: 'Exo 2, sans-serif' }}>
+      <div className="text-sm text-slate-400 font-sans" style={{ fontFamily: '"Exo 2", sans-serif' }}>
         {label}
       </div>
     </div>
   );
 }
 
-// Rotating shield SVG
+// Rotating shield SVG Component
 function ShieldOrb() {
   return (
-    <div className="relative flex items-center justify-center" style={{ width: 380, height: 380 }}>
-      <svg className="absolute" style={{ animation: 'rotateSlow 15s linear infinite' }} width="380" height="380" viewBox="0 0 380 380">
+    <div className="relative flex items-center justify-center w-[380px] h-[380px]">
+      <svg className="absolute animate-[spin_15s_linear_infinite]" width="380" height="380" viewBox="0 0 380 380">
         <circle cx="190" cy="190" r="180" fill="none" stroke="rgba(0,212,255,0.15)" strokeWidth="1" strokeDasharray="8 6" />
         <circle cx="190" cy="190" r="160" fill="none" stroke="rgba(180,77,255,0.1)" strokeWidth="1" strokeDasharray="4 12" />
       </svg>
-      <svg className="absolute" style={{ animation: 'rotateSlow 8s linear infinite reverse' }} width="300" height="300" viewBox="0 0 300 300">
+      <svg className="absolute animate-[spin_8s_linear_infinite_reverse]" width="300" height="300" viewBox="0 0 300 300">
         <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(0,255,136,0.12)" strokeWidth="1" strokeDasharray="6 8" />
       </svg>
-      <div className="absolute rounded-full" style={{
-        width: 200, height: 200,
-        background: 'radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(180,77,255,0.06) 50%, transparent 70%)',
-        filter: 'blur(20px)',
-      }} />
-      <div style={{ animation: 'float 5s ease-in-out infinite' }}>
-        <Shield style={{ width: 120, height: 120, color: '#00d4ff', filter: 'drop-shadow(0 0 30px rgba(0,212,255,0.8))' }} />
+      <div className="absolute rounded-full w-[200px] h-[200px] bg-gradient-to-r from-cyan-500/10 via-purple-500/5 to-transparent blur-xl pointer-events-none" />
+      <div className="animate-[bounce_4s_ease-in-out_infinite]">
+        <Shield className="w-[120px] h-[120px] text-cyan-400 drop-shadow-[0_0_30px_rgba(0,212,255,0.6)]" />
       </div>
       {[0, 60, 120, 180, 240, 300].map((deg, i) => (
-        <div key={i} className="absolute" style={{
-          width: 8, height: 8,
-          borderRadius: '50%',
+        <div key={i} className="absolute w-2 h-2 rounded-full" style={{
           background: i % 2 === 0 ? '#00d4ff' : '#b44dff',
           boxShadow: `0 0 8px ${i % 2 === 0 ? '#00d4ff' : '#b44dff'}`,
           transform: `rotate(${deg}deg) translateX(170px)`,
-          animation: `rotateSlow ${10 + i}s linear infinite`,
+          animation: `spin ${10 + i}s linear infinite`,
           transformOrigin: 'center',
         }} />
       ))}
@@ -102,12 +104,12 @@ function ShieldOrb() {
 }
 
 const features = [
-  { icon: Eye, label: 'Threat Scanner', desc: 'Real-time URL & malware detection', color: '#00d4ff' },
-  { icon: AlertTriangle, label: 'Breach Monitor', desc: 'Dark web leak detection', color: '#ff3366' },
-  { icon: Lock, label: 'Password Vault', desc: 'Military-grade encryption', color: '#00ff88' },
-  { icon: Globe, label: 'VPN Shield', desc: 'Anonymous IP routing', color: '#b44dff' },
-  { icon: Activity, label: 'Privacy Audit', desc: 'Social media risk scoring', color: '#00d4ff' },
-  { icon: Zap, label: 'AI Chatbot', desc: 'Instant security advisor', color: '#ffaa00' },
+  { id: 'threat-scanner', icon: Eye, label: 'Threat Scanner', desc: 'Real-time URL & malware detection', color: '#00d4ff' },
+  { id: 'breach-monitor', icon: AlertTriangle, label: 'Breach Monitor', desc: 'Dark web leak detection', color: '#ff3366' },
+  { id: 'password-vault', icon: Lock, label: 'Password Vault', desc: 'Military-grade encryption', color: '#00ff88' },
+  { id: 'vpn-shield', icon: Globe, label: 'VPN Shield', desc: 'Anonymous IP routing', color: '#b44dff' },
+  { id: 'privacy-audit', icon: Activity, label: 'Privacy Audit', desc: 'Social media risk scoring', color: '#00d4ff' },
+  { id: 'chatbot', icon: Zap, label: 'AI Chatbot', desc: 'Instant security advisor', color: '#ffaa00' },
 ];
 
 export default function HeroSection({ setActivePage }) {
@@ -124,14 +126,19 @@ export default function HeroSection({ setActivePage }) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     fetch('/api/system-status')
       .then(res => res.json())
-      .then(data => setSysData(data))
+      .then(data => {
+        if (isMounted) setSysData(data);
+      })
       .catch(() => console.log("System offline - Local mode active"));
+      
+    return () => { isMounted = false; };
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative text-slate-200">
       {/* HERO SECTION */}
       <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto w-full">
@@ -139,23 +146,22 @@ export default function HeroSection({ setActivePage }) {
 
             {/* Left Content */}
             <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border"
-                style={{ borderColor: 'rgba(0,212,255,0.3)', background: 'rgba(0,212,255,0.05)' }}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/5">
                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#00d4ff]" />
-                <span style={{ fontFamily: 'Share Tech Mono, monospace', color: '#00d4ff', fontSize: '0.75rem', letterSpacing: '2px' }}>
+                <span style={{ fontFamily: 'Share Tech Mono, monospace' }} className="text-cyan-400 text-xs tracking-widest uppercase">
                   {sysData?.protocol || 'v2.4.1'} — ACTIVE PROTECTION
                 </span>
               </div>
 
               <div>
-                <h1 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, lineHeight: 1.1 }}>
-                  <span style={{ color: '#e0e8f0' }}>YOUR DIGITAL</span><br />
-                  <span style={{ color: '#00d4ff', textShadow: '0 0 30px rgba(0,212,255,0.6)' }}>FORTRESS</span><br />
-                  <span style={{ color: 'rgba(224,232,240,0.6)', fontSize: '60%' }}>IN THE CYBER STORM</span>
+                <h1 style={{ fontFamily: 'Orbitron, sans-serif' }} className="text-4xl sm:text-5xl lg:text-6xl font-black leading-none">
+                  <span className="text-slate-100">YOUR DIGITAL</span><br />
+                  <span className="text-cyan-400 drop-shadow-[0_0_30px_rgba(0,212,255,0.4)]">FORTRESS</span><br />
+                  <span className="text-slate-400 text-3xl sm:text-4xl lg:text-5xl">IN THE CYBER STORM</span>
                 </h1>
               </div>
 
-              <div style={{ fontFamily: 'Share Tech Mono, monospace', color: '#00ff88', fontSize: '1rem', minHeight: '1.5rem' }}>
+              <div style={{ fontFamily: 'Share Tech Mono, monospace' }} className="text-emerald-400 text-base min-h-[1.5rem]">
                 <TypingText texts={[
                   '> Scanning for threats...',
                   '> Monitoring dark web leaks...',
@@ -165,17 +171,16 @@ export default function HeroSection({ setActivePage }) {
                 ]} />
               </div>
 
-              <p className="text-base leading-relaxed max-w-lg"
-                style={{ color: 'rgba(224,232,240,0.65)', fontFamily: 'Exo 2, sans-serif' }}>
+              <p style={{ fontFamily: '"Exo 2", sans-serif' }} className="text-base leading-relaxed text-slate-400 max-w-lg">
                 SentinelShield gives everyday users a professional-grade cybersecurity command center.
                 Real-time protection, breach alerts, and encrypted vaults — all in one platform.
               </p>
 
               <div className="flex flex-wrap gap-4">
                 <button 
-                  className="neon-btn flex items-center gap-2 cursor-pointer" 
+                  className="neon-btn flex items-center gap-2 cursor-pointer bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400 px-7 py-3 rounded text-xs font-bold tracking-wider" 
                   onClick={() => handleNavigation('dashboard')}
-                  style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.8rem', padding: '12px 28px' }}
+                  style={{ fontFamily: 'Orbitron, sans-serif' }}
                 >
                   <Shield className="w-4 h-4" />
                   ENTER COMMAND CENTER
@@ -183,20 +188,8 @@ export default function HeroSection({ setActivePage }) {
                 </button>
                 <button 
                   onClick={() => handleNavigation('dashboard')}
-                  style={{
-                    padding: '12px 28px',
-                    background: 'rgba(180,77,255,0.1)',
-                    border: '1px solid rgba(180,77,255,0.3)',
-                    borderRadius: '4px',
-                    color: '#b44dff',
-                    fontFamily: 'Orbitron, sans-serif',
-                    fontSize: '0.8rem',
-                    letterSpacing: '2px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = 'rgba(180,77,255,0.2)'}
-                  onMouseLeave={(e) => e.target.style.background = 'rgba(180,77,255,0.1)'}
+                  className="px-7 py-3 bg-purple-500/10 border border-purple-500/30 rounded text-purple-400 text-xs font-bold tracking-widest cursor-pointer hover:bg-purple-500/20 transition-all duration-300"
+                  style={{ fontFamily: 'Orbitron, sans-serif' }}
                 >
                   VIEW LIVE DEMO
                 </button>
@@ -212,7 +205,7 @@ export default function HeroSection({ setActivePage }) {
       </section>
 
       {/* STATS BAR */}
-      <section className="py-12 px-4 bg-white/5 backdrop-blur-sm" style={{ borderTop: '1px solid rgba(0,212,255,0.08)', borderBottom: '1px solid rgba(0,212,255,0.08)' }}>
+      <section className="py-12 px-4 bg-white/5 backdrop-blur-sm border-t border-b border-cyan-500/10">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCounter value="2,400,000+" label="Threats Blocked" color="#00d4ff" />
           <StatCounter value="98%" label="Detection Rate" color="#00ff88" />
@@ -225,10 +218,10 @@ export default function HeroSection({ setActivePage }) {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#e0e8f0', marginBottom: '1rem' }}>
-              SECURITY <span style={{ color: '#00d4ff' }}>ARSENAL</span>
+            <h2 style={{ fontFamily: 'Orbitron, sans-serif' }} className="text-3xl sm:text-4xl font-bold text-slate-100 mb-4">
+              SECURITY <span className="text-cyan-400">ARSENAL</span>
             </h2>
-            <p style={{ color: 'rgba(224,232,240,0.5)', fontFamily: 'Exo 2, sans-serif' }}>
+            <p style={{ fontFamily: '"Exo 2", sans-serif' }} className="text-slate-500">
               Six powerful modules. One unified platform.
             </p>
           </div>
@@ -237,20 +230,20 @@ export default function HeroSection({ setActivePage }) {
             {features.map((f, i) => {
               const Icon = f.icon;
               return (
-                <div key={i} className="glass-card p-6 cursor-pointer group transition-all duration-300"
-                  style={{ transition: 'transform 0.3s ease' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                  onClick={() => handleNavigation('dashboard')}>
+                <div 
+                  key={i} 
+                  className="glass-card p-6 cursor-pointer group border border-slate-800 hover:border-slate-700/80 rounded-xl bg-slate-900/20 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                  onClick={() => handleNavigation(f.id)}
+                >
                   <div className="flex items-start gap-4">
                     <div className="p-3 rounded-lg" style={{ background: `${f.color}15`, border: `1px solid ${f.color}25` }}>
                       <Icon style={{ width: 22, height: 22, color: f.color }} />
                     </div>
                     <div>
-                      <h3 className="font-semibold mb-1" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.85rem', color: '#e0e8f0', letterSpacing: '1px' }}>
+                      <h3 className="font-semibold mb-1 text-slate-200 tracking-wider text-xs uppercase" style={{ fontFamily: 'Orbitron, sans-serif' }}>
                         {f.label}
                       </h3>
-                      <p className="text-sm" style={{ color: 'rgba(224,232,240,0.55)', fontFamily: 'Exo 2, sans-serif' }}>
+                      <p className="text-sm text-slate-400" style={{ fontFamily: '"Exo 2", sans-serif' }}>
                         {f.desc}
                       </p>
                     </div>
@@ -266,18 +259,19 @@ export default function HeroSection({ setActivePage }) {
       {/* FINAL CTA */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="glass-card p-12 relative overflow-hidden border border-blue-500/20">
-            <div className="absolute inset-0 pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at center, rgba(0,212,255,0.06) 0%, transparent 70%)' }} />
-            <h2 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: 'clamp(1.2rem, 3vw, 2rem)', color: '#e0e8f0', marginBottom: '1rem' }}>
-              READY TO SECURE YOUR
-              <span style={{ color: '#00d4ff' }}> DIGITAL LIFE?</span>
+          <div className="glass-card p-12 relative overflow-hidden border border-cyan-500/20 bg-slate-900/10 rounded-2xl backdrop-blur-sm">
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.06)_0%,transparent_70%)]" />
+            <h2 style={{ fontFamily: 'Orbitron, sans-serif' }} className="text-2xl sm:text-3xl font-bold text-slate-100 mb-4">
+              READY TO SECURE YOUR <span className="text-cyan-400">DIGITAL LIFE?</span>
             </h2>
-            <p className="mb-8" style={{ color: 'rgba(224,232,240,0.6)', fontFamily: 'Exo 2, sans-serif' }}>
+            <p className="mb-8 text-slate-400" style={{ fontFamily: '"Exo 2", sans-serif' }}>
               Join 150,000+ users already protected by SentinelShield
             </p>
-            <button className="neon-btn cursor-pointer" onClick={() => handleNavigation('dashboard')}
-              style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.9rem', padding: '14px 40px' }}>
+            <button 
+              className="neon-btn cursor-pointer bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400 px-10 py-3.5 rounded font-bold text-sm tracking-wider" 
+              onClick={() => handleNavigation('dashboard')}
+              style={{ fontFamily: 'Orbitron, sans-serif' }}
+            >
               ACTIVATE SHIELD NOW
             </button>
           </div>
@@ -285,8 +279,8 @@ export default function HeroSection({ setActivePage }) {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 text-center border-t border-white/5">
-        <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(224,232,240,0.3)', fontSize: '0.75rem' }}>
+      <footer className="py-8 px-4 text-center border-t border-slate-900">
+        <p style={{ fontFamily: 'Share Tech Mono, monospace' }} className="text-slate-600 text-xs tracking-wider">
           © 2026 SENTINELSHIELD // ALL SYSTEMS OPERATIONAL // {sysData?.protocol || 'v2.4.1'}
         </p>
       </footer>
