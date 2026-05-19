@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Dashboard from '@/components/Dashboard';
 import ThreatScanner from '@/components/ThreatScanner';
-import BreachMonitor from '@/components/BreachMonitorr'; // আপনার ফোল্ডারের বানান অনুযায়ী ডাবল 'rr' ফিক্স করা হলো
+import BreachMonitor from '@/components/BreachMonitorr';
 import VPNDashboard from '@/components/VPNDashboard';
 import HeroSection from '@/components/HeroSection';
 import VoiceAssistant from '@/components/VoiceAssistant';
@@ -23,7 +23,10 @@ import {
   Globe,
   AlertTriangle,
   FileText,
-  Sliders
+  Sliders,
+  TerminalSquare,
+  ShieldAlert,
+  Fingerprint
 } from 'lucide-react';
 
 export default function Home() {
@@ -35,6 +38,14 @@ export default function Home() {
   const [activeThreats, setActiveThreats] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [terminalLogs, setTerminalLogs] = useState([]);
+  
+  // Extra Core States for Advanced Cyber Dashboard Extension
+  const [cipherAlgorithm, setCipherAlgorithm] = useState('AES_256_GCM');
+  const [mainframeMemory, setMainframeMemory] = useState('STABLE');
+  const [packetDropRate, setPacketDropRate] = useState('0%');
+  const [linkSpeed, setLinkSpeed] = useState('10 GB/S');
+  const [kernelVersion, setKernelVersion] = useState('v2.4.1');
+  const [isShellSecure, setIsShellSecure] = useState(true);
 
   // Core system hydration layer and advanced background multi-ticker
   useEffect(() => {
@@ -44,24 +55,34 @@ export default function Home() {
       "CRITICAL: Firewall handshake protocol initiated...",
       "SECURE_GATEWAY: Established encrypted tunnel on SSL_NODE_09",
       "MONITOR: Mainframe memory allocation verified stable.",
-      "INTRUSION_DETECTOR: Running background scan... 0 anomalies found."
+      "INTRUSION_DETECTOR: Running background scan... 0 anomalies found.",
+      "SECURE_SHELL: RSA key handshake verified successfully."
     ];
     setTerminalLogs(logs);
 
     const interval = setInterval(() => {
-      const fluctuations = ['99.4%', '99.2%', '99.5%', '99.3%'];
-      const loads = ['12.4 Gbps', '14.1 Gbps', '11.8 Gbps', '13.5 Gbps'];
+      const fluctuations = ['99.4%', '99.2%', '99.5%', '99.3%', '99.6%'];
+      const loads = ['12.4 Gbps', '14.1 Gbps', '11.8 Gbps', '13.5 Gbps', '12.9 Gbps'];
+      const memories = ['STABLE', 'OPTIMIZED', '94% FREE', 'NOMINAL'];
       
       const randomValue = fluctuations[Math.floor(Math.random() * fluctuations.length)];
       const randomLoad = loads[Math.floor(Math.random() * loads.length)];
+      const randomMemory = memories[Math.floor(Math.random() * memories.length)];
       
       setFirewallIntegrity(randomValue);
       setNetworkLoad(randomLoad);
+      setMainframeMemory(randomMemory);
 
-      // Dynamically pushing matrix simulation logs
+      // Randomly fluctuation of active threats for simulation realism
+      if (Math.random() > 0.7) {
+        setActiveThreats(prev => (prev === 0 ? 1 : 0));
+      }
+
+      // Dynamically pushing matrix simulation logs to terminal feed
       setTerminalLogs(prev => [
-        `KERNEL_UPDATE: Packet transaction verified at ${new Date().toLocaleTimeString()}`,
-        ...prev.slice(0, 4)
+        `KERNEL_UPDATE: Packet transaction verified at ${new Date().toLocaleTimeString()} [OK]`,
+        `NODE_SYNC: Cluster infrastructure database synchronization completed`,
+        ...prev.slice(0, 3)
       ]);
     }, 4000);
 
@@ -77,7 +98,7 @@ export default function Home() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none z-0" />
       
       {/* GLOBAL TOP AMBIENT NEON LINE EFFECT */}
-      <div className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.6)] z-50" />
+      <div className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-right from-transparent via-blue-500 to-transparent shadow-[0_0_30px_rgba(59,130,246,0.6)] z-50" />
       
       {/* COMPLEX OPERATIONAL COCKPIT HUD (HEADS UP DISPLAY) BAR */}
       <div className="fixed top-14 left-1/2 -translate-x-1/2 bg-slate-950/80 border border-slate-900/80 px-5 py-1.5 rounded-full text-[9px] text-slate-500 uppercase tracking-widest flex items-center gap-5 backdrop-blur-md z-40 hidden lg:flex shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-blue-500/10">
@@ -87,7 +108,7 @@ export default function Home() {
         </span>
         <span className="text-slate-800">|</span>
         <span className="flex items-center gap-1.5">
-          <Cpu size={11} className="text-purple-400" /> CORE_CIPHER: <span className="text-purple-400 font-bold">AES_256_GCM</span>
+          <Cpu size={11} className="text-purple-400" /> CORE_CIPHER: <span className="text-purple-400 font-bold">{cipherAlgorithm}</span>
         </span>
         <span className="text-slate-800">|</span>
         <span className="flex items-center gap-1.5">
@@ -190,12 +211,12 @@ export default function Home() {
 
       {/* AMBIENT RADAR BOTTOM INFRASTRUCTURE HUD WATERMARK */}
       <div className="fixed bottom-4 left-6 text-[9px] text-slate-600/80 tracking-[0.2em] pointer-events-none font-mono hidden md:block z-40 uppercase select-none">
-        Mainframe_Secure // Thread_Pool_Active // Enforcer_v2.4.1 // Secure_Shell_Initiated
+        Mainframe_Secure // Thread_Pool_Active // Enforcer_{kernelVersion} // Secure_Shell_{isShellSecure ? 'Initiated' : 'Terminated'}
       </div>
       
       {/* ADDITIONAL BOTTOM SCI-FI SYSTEM DATA WATERMARK */}
       <div className="fixed bottom-4 right-6 text-[9px] text-slate-700 tracking-wider pointer-events-none font-mono hidden xl:block z-40 select-none">
-        [ MEMORY_BLOCK: STABLE // PACKET_DROP: 0% // LINK_SPEED: 10GB/S // ACTIVE_THREATS: {activeThreats} ]
+        [ MEMORY_BLOCK: {mainframeMemory} // PACKET_DROP: {packetDropRate} // LINK_SPEED: {linkSpeed} // ACTIVE_THREATS: {activeThreats} ]
       </div>
 
     </main>

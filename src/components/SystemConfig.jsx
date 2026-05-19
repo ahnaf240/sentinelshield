@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Settings, Cpu, Radio, Shield, Zap, RefreshCw, Terminal } from 'lucide-react';
+import { Settings, Cpu, Radio, Shield, Zap, Terminal } from 'lucide-react';
 
 export default function SystemConfig() {
   const [config, setConfig] = useState({
@@ -23,12 +23,12 @@ export default function SystemConfig() {
   };
 
   return (
-    <div className="bg-slate-950/40 border border-slate-800 p-6 rounded-2xl max-w-md mx-auto font-mono text-slate-200 backdrop-blur-xl shadow-[0_0_50px_rgba(30,58,138,0.15)] border-blue-500/10 mt-10 animate-in fade-in zoom-in-95 duration-400">
+    <div className="bg-slate-950/40 border border-slate-800 p-6 rounded-2xl max-w-md mx-auto font-mono text-slate-200 backdrop-blur-xl shadow-[0_0_50px_rgba(30,58,138,0.15)] border-blue-500/10 animate-in fade-in zoom-in-95 duration-400">
       
       {/* HEADER HUD CONTROL */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <Settings className="text-purple-500 animate-spin duration-3000" size={24} />
+          <Settings className="text-purple-500 animate-spin" size={24} style={{ animationDuration: '3s' }} />
           <div>
             <h2 className="text-md font-bold uppercase tracking-wider text-purple-400">System_Configuration</h2>
             <p className="text-[10px] text-slate-500">Core OS tuning parameters</p>
@@ -72,7 +72,7 @@ export default function SystemConfig() {
           <select 
             value={config.encryptionLevel} 
             onChange={(e) => handleDropdown('encryptionLevel', e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-blue-400 focus:outline-none font-bold text-[11px]"
+            className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-blue-400 focus:outline-none font-bold text-[11px] cursor-pointer"
           >
             <option value="AES_256">AES-256-GCM</option>
             <option value="RSA_4096">RSA-4096-BIT</option>
@@ -92,7 +92,7 @@ export default function SystemConfig() {
           <select 
             value={config.firewallMode} 
             onChange={(e) => handleDropdown('firewallMode', e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-purple-400 focus:outline-none font-bold text-[11px]"
+            className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-purple-400 focus:outline-none font-bold text-[11px] cursor-pointer"
           >
             <option value="Active Protection">ACTIVE_GUARD</option>
             <option value="Stealth Mode">STEALTH_SHIELD</option>
