@@ -140,8 +140,8 @@ export default function Navbar({ activePage, setActivePage }) {
                     <User size={14} /> ACCESS_PROFILE
                   </button>
                   <button
-                    onClick={() => { setActivePage('profile'); setShowDropdown(false); }}
-                    className="w-full flex items-center gap-3 p-2.5 text-[10px] font-bold text-gray-400 hover:text-[#00d4ff] rounded-xl transition-colors"
+                    onClick={() => { setActivePage('system-config'); setShowDropdown(false); }}
+                    className="w-full flex items-center gap-3 p-2.5 text-[10px] font-bold text-gray-400 hover:text-[#b44dff] rounded-xl transition-colors"
                     style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     <Settings size={14} /> SYSTEM_CONFIG

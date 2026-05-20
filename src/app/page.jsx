@@ -8,6 +8,7 @@ import Navbar      from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import Dashboard   from '@/components/Dashboard';
 import UserPortal  from '@/components/UserPortal';
+import SystemConfig from '@/components/SystemConfig';
 
 // এই তিনটা Modules.jsx থেকে re-export হয়
 import ThreatScanner from '@/components/ThreatScanner';
@@ -232,6 +233,13 @@ export default function Home() {
           {activePage === 'profile' && (
             <div className="transition-all duration-400">
               <UserPortal />
+            </div>
+          )}
+
+          {/* System Config */}
+          {activePage === 'system-config' && (
+            <div className="transition-all duration-400">
+              <SystemConfig />
             </div>
           )}
 
