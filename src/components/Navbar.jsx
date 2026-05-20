@@ -121,13 +121,15 @@ export default function Navbar({ activePage, setActivePage }) {
               {/* Dropdown */}
               {showDropdown && (
                 <div
-                  className="absolute right-0 mt-3 w-52 rounded-2xl p-2"
+                  className="w-52 rounded-2xl p-2"
                   style={{
                     background: '#0a0f1a',
                     border:     '1px solid rgba(255,255,255,0.1)',
                     boxShadow:  '0 20px 40px rgba(0,0,0,0.6)',
                     zIndex:     99999,
-                    top:        '100%',
+                    position:   'fixed',
+                    top:        '64px',
+                    right:      '24px',
                   }}
                 >
                   <button
