@@ -81,6 +81,7 @@ export default function UserPortal() {
   const [networkId,      setNetworkId]      = useState('');
   const [mounted,        setMounted]        = useState(false);
   const [saved,          setSaved]          = useState(false);
+  const [githubUser,     setGithubUser]     = useState(null);
 
   const [profile, setProfile] = useState({
     username: '',
@@ -122,12 +123,30 @@ export default function UserPortal() {
     setMounted(true);
     setNetworkId(Math.random().toString(16).slice(2, 10).toUpperCase());
 
+    // Read GitHub user from cookie
+    try {
+      const cookie = document.cookie.split('; ').find(r => r.startsWith('sentinel_user='));
+      if (cookie) {
+        const userData = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+        if (userData.provider === 'github') {
+          setGithubUser(userData);
+          setProfile({ username: userData.username || '', bio: userData.bio || '', status: 'Authenticated' });
+        }
+      }
+    } catch {}
+
+    // Check URL for auth success/error
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('auth') === 'success') {
+      window.history.replaceState({}, '', '/');
+    }
+
     const fetchUserData = async () => {
       try {
         const res = await fetch('/api/user-portal');
         if (res.ok) {
           const data = await res.json();
-          setProfile({ username: data.name || '', bio: data.role || '', status: 'Authenticated' });
+          setProfile(p => ({ ...p, username: p.username || data.name || '', bio: p.bio || data.role || '', status: 'Authenticated' }));
         }
       } catch {
         /* no API yet — that's fine */
@@ -135,6 +154,16 @@ export default function UserPortal() {
     };
     fetchUserData();
   }, []);
+
+  const handleGitHubLogin = () => {
+    window.location.href = '/api/auth/github';
+  };
+
+  const handleGitHubLogout = () => {
+    document.cookie = 'sentinel_user=; max-age=0; path=/';
+    setGithubUser(null);
+    setProfile({ username: '', bio: '', status: 'Idle' });
+  };
 
   const handleInitialize = async () => {
     setIsInitializing(true);
@@ -250,39 +279,75 @@ export default function UserPortal() {
                 Connect Securely Via
               </p>
 
-              {[
-                { label: 'Facebook Login',  icon: Facebook, color: '#1877F2' },
-                { label: 'Instagram Link',  icon: Instagram, color: '#E4405F' },
-                { label: 'GitHub Sync',     icon: Github,   color: 'rgba(255,255,255,0.9)' },
-              ].map((btn) => {
-                const Icon = btn.icon;
-                return (
+              {/* GitHub — Live OAuth */}
+              {githubUser ? (
+                <div
+                  className="w-full p-4 rounded-xl"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <img src={githubUser.avatar} alt="avatar" className="w-10 h-10 rounded-full" style={{ border: '2px solid #00ff88' }} />
+                    <div>
+                      <p style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.8rem', color: '#00ff88' }}>
+                        {githubUser.name}
+                      </p>
+                      <p style={{ fontFamily: 'Share Tech Mono, monospace', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
+                        @{githubUser.username}
+                      </p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1" style={{ background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.3)', borderRadius: 8, padding: '4px 8px' }}>
+                      <ShieldCheck size={12} style={{ color: '#00ff88' }} />
+                      <span style={{ fontSize: '0.65rem', color: '#00ff88', fontFamily: 'Orbitron, sans-serif' }}>LINKED</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 text-xs" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Share Tech Mono, monospace', marginBottom: 12 }}>
+                    <span>⭐ {githubUser.publicRepos} repos</span>
+                    <span>·</span>
+                    <span>👥 {githubUser.followers} followers</span>
+                  </div>
                   <button
-                    key={btn.label}
-                    type="button"
-                    className="w-full py-3 flex items-center justify-center gap-3 rounded-xl transition-all"
-                    style={{
-                      background: `${btn.color}18`,
-                      border:     `1px solid ${btn.color}40`,
-                      color:      'rgba(255,255,255,0.9)',
-                      cursor:     'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = `${btn.color}28`;
-                      e.currentTarget.style.borderColor = btn.color;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = `${btn.color}18`;
-                      e.currentTarget.style.borderColor = `${btn.color}40`;
-                    }}
+                    onClick={handleGitHubLogout}
+                    className="w-full py-2 rounded-lg transition-all"
+                    style={{ background: 'rgba(255,51,102,0.1)', border: '1px solid rgba(255,51,102,0.3)', color: '#ff3366', fontFamily: 'Orbitron, sans-serif', fontSize: '0.65rem', cursor: 'pointer', letterSpacing: 1 }}
                   >
-                    <Icon className="w-5 h-5" style={{ color: btn.color }} />
-                    <span style={{ fontSize: '0.875rem', fontWeight: 500, fontFamily: 'Exo 2, sans-serif' }}>
-                      {btn.label}
-                    </span>
+                    DISCONNECT GITHUB
                   </button>
-                );
-              })}
+                </div>
+              ) : (
+                <button
+                  onClick={handleGitHubLogin}
+                  type="button"
+                  className="w-full py-3 flex items-center justify-center gap-3 rounded-xl transition-all"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.9)', cursor: 'pointer' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+                >
+                  <Github className="w-5 h-5" />
+                  <span style={{ fontSize: '0.875rem', fontWeight: 500, fontFamily: 'Exo 2, sans-serif' }}>GitHub Sync</span>
+                </button>
+              )}
+
+              {/* Facebook — Coming Soon */}
+              <button
+                type="button"
+                className="w-full py-3 flex items-center justify-center gap-3 rounded-xl"
+                style={{ background: 'rgba(24,119,242,0.08)', border: '1px solid rgba(24,119,242,0.2)', color: 'rgba(255,255,255,0.4)', cursor: 'not-allowed', position: 'relative' }}
+              >
+                <Facebook className="w-5 h-5" style={{ color: '#1877F2' }} />
+                <span style={{ fontSize: '0.875rem', fontFamily: 'Exo 2, sans-serif' }}>Facebook Login</span>
+                <span style={{ position: 'absolute', right: 12, fontSize: '0.6rem', fontFamily: 'Orbitron, sans-serif', color: '#ffaa00', background: 'rgba(255,170,0,0.1)', border: '1px solid rgba(255,170,0,0.3)', borderRadius: 4, padding: '2px 6px' }}>SOON</span>
+              </button>
+
+              {/* Instagram — Coming Soon */}
+              <button
+                type="button"
+                className="w-full py-3 flex items-center justify-center gap-3 rounded-xl"
+                style={{ background: 'rgba(228,64,95,0.08)', border: '1px solid rgba(228,64,95,0.2)', color: 'rgba(255,255,255,0.4)', cursor: 'not-allowed', position: 'relative' }}
+              >
+                <Instagram className="w-5 h-5" style={{ color: '#E4405F' }} />
+                <span style={{ fontSize: '0.875rem', fontFamily: 'Exo 2, sans-serif' }}>Instagram Link</span>
+                <span style={{ position: 'absolute', right: 12, fontSize: '0.6rem', fontFamily: 'Orbitron, sans-serif', color: '#ffaa00', background: 'rgba(255,170,0,0.1)', border: '1px solid rgba(255,170,0,0.3)', borderRadius: 4, padding: '2px 6px' }}>SOON</span>
+              </button>
             </div>
 
             {/* Profile editor */}
