@@ -9,6 +9,7 @@ import HeroSection from '@/components/HeroSection';
 import Dashboard   from '@/components/Dashboard';
 import UserPortal  from '@/components/UserPortal';
 import SystemConfig from '@/components/SystemConfig';
+import AIChatbot   from '@/components/AIChatbot';
 
 // এই তিনটা Modules.jsx থেকে re-export হয়
 import ThreatScanner from '@/components/ThreatScanner';
@@ -245,6 +246,9 @@ export default function Home() {
 
         </div>
       </div>
+
+      {/* ── FRIDAY AI Chatbot (সব page এ দেখাবে) ── */}
+      <AIChatbot />
 
       {/* ── Bottom Live Terminal Feed (desktop only) ── */}
       <div
