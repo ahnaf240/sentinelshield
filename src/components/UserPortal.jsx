@@ -82,6 +82,7 @@ export default function UserPortal() {
   const [mounted,        setMounted]        = useState(false);
   const [saved,          setSaved]          = useState(false);
   const [githubUser,     setGithubUser]     = useState(null);
+  const [facebookUser,   setFacebookUser]   = useState(null);
 
   const [profile, setProfile] = useState({
     username: '',
@@ -157,6 +158,15 @@ export default function UserPortal() {
 
   const handleGitHubLogin = () => {
     window.location.href = '/api/auth/github';
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = '/api/auth/facebook';
+  };
+
+  const handleFacebookLogout = () => {
+    document.cookie = 'sentinel_user=; max-age=0; path=/';
+    setFacebookUser(null);
   };
 
   const handleGitHubLogout = () => {
@@ -327,16 +337,48 @@ export default function UserPortal() {
                 </button>
               )}
 
-              {/* Facebook — Coming Soon */}
-              <button
-                type="button"
-                className="w-full py-3 flex items-center justify-center gap-3 rounded-xl"
-                style={{ background: 'rgba(24,119,242,0.08)', border: '1px solid rgba(24,119,242,0.2)', color: 'rgba(255,255,255,0.4)', cursor: 'not-allowed', position: 'relative' }}
-              >
-                <Facebook className="w-5 h-5" style={{ color: '#1877F2' }} />
-                <span style={{ fontSize: '0.875rem', fontFamily: 'Exo 2, sans-serif' }}>Facebook Login</span>
-                <span style={{ position: 'absolute', right: 12, fontSize: '0.6rem', fontFamily: 'Orbitron, sans-serif', color: '#ffaa00', background: 'rgba(255,170,0,0.1)', border: '1px solid rgba(255,170,0,0.3)', borderRadius: 4, padding: '2px 6px' }}>SOON</span>
-              </button>
+              {/* Facebook — Live OAuth */}
+              {facebookUser ? (
+                <div
+                  className="w-full p-4 rounded-xl"
+                  style={{ background: 'rgba(24,119,242,0.08)', border: '1px solid rgba(24,119,242,0.3)' }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <img src={facebookUser.avatar} alt="avatar" className="w-10 h-10 rounded-full" style={{ border: '2px solid #1877F2' }} />
+                    <div>
+                      <p style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.8rem', color: '#1877F2' }}>
+                        {facebookUser.name}
+                      </p>
+                      <p style={{ fontFamily: 'Share Tech Mono, monospace', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
+                        {facebookUser.email}
+                      </p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1" style={{ background: 'rgba(24,119,242,0.1)', border: '1px solid rgba(24,119,242,0.3)', borderRadius: 8, padding: '4px 8px' }}>
+                      <ShieldCheck size={12} style={{ color: '#1877F2' }} />
+                      <span style={{ fontSize: '0.65rem', color: '#1877F2', fontFamily: 'Orbitron, sans-serif' }}>LINKED</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleFacebookLogout}
+                    className="w-full py-2 rounded-lg transition-all"
+                    style={{ background: 'rgba(255,51,102,0.1)', border: '1px solid rgba(255,51,102,0.3)', color: '#ff3366', fontFamily: 'Orbitron, sans-serif', fontSize: '0.65rem', cursor: 'pointer', letterSpacing: 1 }}
+                  >
+                    DISCONNECT FACEBOOK
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleFacebookLogin}
+                  type="button"
+                  className="w-full py-3 flex items-center justify-center gap-3 rounded-xl transition-all"
+                  style={{ background: 'rgba(24,119,242,0.08)', border: '1px solid rgba(24,119,242,0.3)', color: 'rgba(255,255,255,0.9)', cursor: 'pointer' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(24,119,242,0.18)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(24,119,242,0.08)'; }}
+                >
+                  <Facebook className="w-5 h-5" style={{ color: '#1877F2' }} />
+                  <span style={{ fontSize: '0.875rem', fontFamily: 'Exo 2, sans-serif' }}>Facebook Login</span>
+                </button>
+              )}
 
               {/* Instagram — Coming Soon */}
               <button
